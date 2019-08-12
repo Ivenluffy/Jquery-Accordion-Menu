@@ -8,8 +8,8 @@
     <script src="js/accordion.js"></script>
 </head>
 <body>
-<div id="box1"  idField="id" nameField="text" childrenField="children" onnodeclick ="nodeClick" onnodemouseenter="showinfo" onnodemouseleave="leavenode"  onmenurender="finishrender" style="width:150px;"></div>
-<div id="box2"  idField="id" nameField="name" parentField="pid" onnodeclick ="nodeClick" onnodemouseenter="showinfo" onnodemouseleave="leavenode"  onmenurender="finishrender" style="width:400px;"></div>
+<div id="box1"  idField="id" nameField="text" childrenField="children" onnodeclick ="nodeClick" onnodemouseenter="showinfo" onnodemouseleave="leavenode"  onmenurender="finishrender" style="width:150px;margin:30px auto;"></div>
+<div id="box2"  idField="id" nameField="name" parentField="pid" onnodeclick ="nodeClick" onnodemouseenter="showinfo" onnodemouseleave="leavenode"  onmenurender="finishrender" style="width:180px;margin:50px auto;"></div>
 </body>
 </html>
 <script>
@@ -2395,81 +2395,61 @@
             "index": 3
         }
     ];
-    var json=    TreeArray=[
-        {
-            id: "control",
-            text: "Control",
-            children: [
+    var TreeArray=[
                 {
-                    id: "messagebox",
-                    text: "MessageBox"
-                },
-                {
-                    id: "forms",
-                    text: "Forms",
-                    children: [
+                  id: "window",
+                  text: "Window",
+                  children: [
+                    {
+                      id: "control",
+                      text: "Control",
+                      children: [
                         {
-                            id: "button",
-                            text: "Button"
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            id: "window",
-            text: "Window",
-            children: [
-                {
-                    id: "control",
-                    text: "Control",
-                    children: [
-                        {
-                            id: "messagebox",
-                            text: "MessageBox"
+                          id: "messagebox",
+                          text: "MessageBox"
                         },
                         {
-                            id: "forms",
-                            text: "Forms",
-                            children: [
-                                {
-                                    id: "button",
-                                    text: "Button"
-                                }
-                            ]
+                          id: "forms",
+                          text: "Forms",
+                          children: [
+                            {
+                              id: "button",
+                              text: "Button"
+                            }
+                          ]
                         },
 
-                    ]
-                }
-            ]
-        },
-        {
-            id: "lists",
-            text: "Lists",
-            children: [
-                {
-                    id: "datagrid",
-                    text: "DataGrid"
+                      ]
+                    }
+                  ]
                 },
                 {
-                    id: "tree",
-                    text: "Tree",
-                    children: [
+                  id: "lists",
+                  text: "Lists",
+                  children: [
+                    {
+                      id: "datagrid",
+                      text: "DataGrid"
+                    },
+                    {
+                      id: "tree",
+                      text: "Tree",
+                      children: [
                         {
-                            id: "treegrid",
-                            text: "TreeGrid "
+                          id: "treegrid",
+                          text: "TreeGrid "
                         }
-                    ]
+                      ]
+                    }
+                  ]
                 }
-            ]
-        }
-    ];
+              ];
 
     //数状结构数据加载
-    var menu=$("#box1").accordion(json);
+    var menu=$("#box1").accordion(TreeArray);
     //一维结构数据加载
-    // var menu=$("#box2").accordion(arr);
-
+    var menu=$("#box2").accordion(arr);
+	console.log(JSON.stringify(menu.getListData()))
     function showinfo(sender){
 
     }

@@ -1,4 +1,4 @@
-    /**
+﻿    /**
      * 手风琴菜单
      * 说明：由于属性及事件绑定在菜单标签属性中，初始化配置值option从标签属性中取得
      * <div id="accordion" idField="id" parentField="pid" nameField="text" childrenField="children" onnodeclick ="clickCallback"
@@ -18,142 +18,104 @@
                  renderCallBack:null//菜单加载渲染完后事件
      };
      //数据格式1：
-    TreeArray=[
-                {
-                  id: "control",
-                  text: "Control",
-                  children: [
-                    {
-                      id: "messagebox",
-                      text: "MessageBox"
-                    },
-                    {
-                      id: "forms",
-                      text: "Forms",
-                      children: [
-                        {
-                          id: "button",
-                          text: "Button"
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  id: "window",
-                  text: "Window",
-                  children: [
-                    {
-                      id: "control",
-                      text: "Control",
-                      children: [
-                        {
-                          id: "messagebox",
-                          text: "MessageBox"
-                        },
-                        {
-                          id: "forms",
-                          text: "Forms",
-                          children: [
-                            {
-                              id: "button",
-                              text: "Button"
-                            }
-                          ]
-                        },
+       TreeArray = [
+     {
+         id: "window",
+         text: "Window",
+         children: [
+           {
+               id: "control",
+               text: "Control",
+               children: [
+                 {
+                     id: "messagebox",
+                     text: "MessageBox"
+                 },
+                 {
+                     id: "forms",
+                     text: "Forms",
+                     children: [
+                       {
+                           id: "button",
+                           text: "Button"
+                       }
+                     ]
+                 },
 
-                      ]
-                    }
-                  ]
-                },
-                {
-                  id: "lists",
-                  text: "Lists",
-                  children: [
-                    {
-                      id: "datagrid",
-                      text: "DataGrid"
-                    },
-                    {
-                      id: "tree",
-                      text: "Tree",
-                      children: [
-                        {
-                          id: "treegrid",
-                          text: "TreeGrid "
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
+               ]
+           }
+         ]
+     },
+     {
+         id: "lists",
+         text: "Lists",
+         children: [
+           {
+               id: "datagrid",
+               text: "DataGrid"
+           },
+           {
+               id: "tree",
+               text: "Tree",
+               children: [
+                 {
+                     id: "treegrid",
+                     text: "TreeGrid "
+                 }
+               ]
+           }
+         ]
+     }
+    ];
+
 
 
     //数据格式2：
-    ListData=[
-               {
-                 "id": "control",
-                 "text": "Control",
-                 "pid": ""
-               },
-               {
-                 "id": "messagebox",
-                 "text": "MessageBox",
-                 "pid": "control"
-               },
-               {
-                 "id": "forms",
-                 "text": "Forms",
-                 "pid": "control"
-               },
-               {
-                 "id": "button",
-                 "text": "Button",
-                 "pid": "forms"
-               },
-               {
-                 "id": "window",
-                 "text": "Window",
-                 "pid": ""
-               },
-               {
-                 "id": "control",
-                 "text": "Control",
-                 "pid": "window"
-               },
-               {
-                 "id": "messagebox",
-                 "text": "MessageBox",
-                 "pid": "control"
-               },
-               {
-                 "id": "forms",
-                 "text": "Forms",
-                 "pid": "control"
-               },
-               {
-                 "id": "button",
-                 "text": "Button",
-                 "pid": "forms"
-               },
-               {
-                 "id": "lists",
-                 "text": "Lists",
-                 "pid": ""
-               },
-               {
-                 "id": "datagrid",
-                 "text": "DataGrid",
-                 "pid": "lists"
-               },
-               {
-                 "id": "tree",
-                 "text": "Tree",
-                 "pid": "lists"
-               },
-               {
-                 "id": "treegrid",
-                 "text": "TreeGrid ",
-                 "pid": "tree"
-               }
-             ];
+        ListData = [
+                  {
+                      "id": "window",
+                      "text": "Window",
+                      "pid": ""
+                  },
+                  {
+                      "id": "control",
+                      "text": "Control",
+                      "pid": "window"
+                  },
+                  {
+                      "id": "messagebox",
+                      "text": "MessageBox",
+                      "pid": "control"
+                  },
+                  {
+                      "id": "forms",
+                      "text": "Forms",
+                      "pid": "control"
+                  },
+                  {
+                      "id": "button",
+                      "text": "Button",
+                      "pid": "forms"
+                  },
+                  {
+                      "id": "lists",
+                      "text": "Lists",
+                      "pid": ""
+                  },
+                  {
+                      "id": "datagrid",
+                      "text": "DataGrid",
+                      "pid": "lists"
+                  },
+                  {
+                      "id": "tree",
+                      "text": "Tree",
+                      "pid": "lists"
+                  },
+                  {
+                      "id": "treegrid",
+                      "text": "TreeGrid ",
+                      "pid": "tree"
+                  }
+    ]
+;
