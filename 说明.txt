@@ -17,6 +17,18 @@
                  nodeMouseLeaveEvent:: null,//鼠标离开节点事件
                  renderCallBack:null//菜单加载渲染完后事件
      };
+
+     //方法：
+	var menu=$("#accordion").accordion(arrData);
+	menu.getData(),menu.getNode(id),menu.getSelectNode(),menu.getParentNode(node),
+	menu.getChildNodes(node),menu.getAllChildNodes(node)...
+
+     //事件：
+	onnodeclick ，
+	onnodemouseenter,
+	onnodemouseleave，
+	onmenurender....
+
      //数据格式1：
        TreeArray = [
      {
