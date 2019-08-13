@@ -311,9 +311,9 @@
                 }
             }
             //删除第一维数组各项的pid属性
-            for (var i = 0; i < data.length; i++) {
-                if (this.option.parentField in data[i]) delete data[i][this.option.parentField];
-            }
+            // for (var i = 0; i < data.length; i++) {
+                // if (this.option.parentField in data[i]) delete data[i][this.option.parentField];
+            // }
             return data;
         },
         /**
@@ -332,8 +332,8 @@
          * 获取父节点
          * @param {node} 目标节点
          */
-        getParentNode:function(node){
-            return this.getNode(node[this.idField])
+        getParentNode: function (node) {
+            return this.getNode(node[this.option.parentField]);
         },
         /**
          * 获取直接下级子节点
