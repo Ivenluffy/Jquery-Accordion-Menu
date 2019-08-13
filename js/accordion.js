@@ -27,7 +27,6 @@
         this.initAccordion();
     };
     Accordion.prototype = {
-        constructor: Accordion,
         /**
          * 初始化手风琴菜单
          */
