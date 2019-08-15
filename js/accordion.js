@@ -1,8 +1,8 @@
 (function ($) {
     /**
      * 手风琴菜单
-     * @param {ele} 菜单容器ID
-     * @param {data} 初始化菜单的数组
+     * @param ele  {String} 菜单容器
+     * @param data {Array}  初始化菜单的数组
      * 说明：由于属性及事件绑定在菜单标签属性中，初始化配置值option从标签属性中取得
      * <div id="accordion" idField="id" parentField="pid" nameField="text" childrenField="children" onnodeclick ="clickCallback"
      * onnodemouseenter="mouseEnterCallback" onnodemouseleave="MouseLeaveCallback" onmenurender="renderCallBack"></div>
@@ -75,10 +75,10 @@
         },
         /**
          * 创建子菜单
-         * @param {accordion} 菜单对象
-         * @param {array} 子菜单
-         * @param {pid} 父节点ID
-         * @param {lihtml} li项
+         * @param accordion {Object} 菜单对象
+         * @param submenu   {Array}  子菜单
+         * @param pid       {String} 父节点ID
+         * @param lihtml    {Object} li项jq对象
          */
         createSubMenu: function (accordion, submenu,pid, lihtml) {
             var _this = accordion,
@@ -254,11 +254,9 @@
         },
         /**
          * 将数组数据转为一维数组结构数据。rootPidValue为根节点pid的默认值，自行定义
-         * @param {treeData} 树状结构数据，为空则默认将初始传入数据转为List结构数据
-         * @param {rootPidValue} 转化时如果根目录pid没设值，可传值作为默认值，默认为空字符串
+         * @param treeData     {Array} 树状结构数据，为空则默认将初始传入数据转为List结构数据
+         * @param rootPidValue {String|Int|Object} 转化时如果根目录pid没设值，可传值作为默认值，默认为空字符串
          */
-        //
-
         getListData: function (treeArr) {
             var data = treeArr?this.copyObject(treeArr):this.copyObject(this.data);
             var arr = [];
@@ -281,7 +279,7 @@
         },
         /**
          * 将一维数组数据转树状数组数据
-         * @param {listData} List结构数据,为空则默认将初始传入数据转为树状结构数据
+         * @param listData {Array} List结构数据,为空则默认将初始传入数据转为树状结构数据
          */
         getTreeData: function (listArr) {
             var data = listArr?this.copyObject(listArr):this.copyObject(this.data);
@@ -336,7 +334,7 @@
         },
         /**
          * 获取直接下级子节点
-         * @param {node} 目标节点
+         * @param node {Object} 目标节点
          */
         getChildNodes:function(node){
             var arr=[];
@@ -348,7 +346,7 @@
         },
         /**
          * 获取该节点下所有层级级子节点
-         * @param {node} 目标节点
+         * @param  node {Object} 目标节点
          */
         getAllChildNodes:function(node){
             var data=this.copyObject(this.getListData());
@@ -368,7 +366,7 @@
         },
         /**
          * 根据节点ID获取节点
-         * @param {id} 要获取节点的id
+         * @param id {String|Int|Object} 要获取节点的id
          */
         getNode(id){
             var data=this.getListData();
@@ -382,7 +380,7 @@
         },
         /**
          * 复制对象，防止修改原对象值
-         * @param {obj} 原对象
+         * @param obj {Object} 原对象
          */
         copyObject:function(obj){
             //Object.assign()无法深度复制
