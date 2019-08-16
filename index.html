@@ -6,9 +6,12 @@
     <link rel="stylesheet" href="css/accordion.css">
     <script src="js/jquery-1.10.2.js"></script>
     <script src="js/accordion.js"></script>
+	<style>
+	body,.accordionMenu{background:#337ab7;}
+	</style>
 </head>
 <body>
-<div id="box1"  idField="id" nameField="text" childrenField="children" onnodeclick ="nodeClick" onnodemouseenter="showinfo" onnodemouseleave="leavenode"  onmenurender="finishrender" style="width:150px;margin:30px auto;"></div>
+<div id="box1"   idField="id" nameField="text" childrenField="children" onnodeclick ="nodeClick" onnodemouseenter="showinfo" onnodemouseleave="leavenode"  onmenurender="finishrender" style="width:150px;margin:30px auto;"></div>
 <div id="box2"  idField="id" nameField="text" parentField="pid" onnodeclick ="nodeClick" onnodemouseenter="showinfo" onnodemouseleave="leavenode"  onmenurender="finishrender" style="width:180px;margin:50px auto;"></div>
 </body>
 </html>
