@@ -1,41 +1,19 @@
-
 .accordionMenu { background:#F6F6F6; font:12px/1.5 Tahoma,Arial,sans-serif}
 .accordionMenu ul{ list-style:none; margin:0; padding:0;}
 .accordionMenu ul li{ text-indent:1em; white-space:nowrap; }
-.accordionMenu ul li .menuitem{ display:block; outline:none; height:24px; line-height:24px; margin:1px 0; color:#000; text-decoration:none;position:relative;
-    background: #EBEDF2 url(../images/btn_bg1.png) repeat-x 0 0;padding-right:12px;box-sizing:border-box;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;}
+.accordionMenu ul li .menuitem{ display:block; outline:none; height:24px; line-height:24px; margin:1px 0; color:#000;
+    text-decoration:none;position:relative;background: #EBEDF2 url(../images/btn_bg1.png) repeat-x 0 0;padding-right:12px;
+    box-sizing:border-box;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;}
 /*
 .accordionMenu ul li img{position: absolute;right: 4px;top: 6px;width: 12px;height: 12px;background: url(../images/arrow.gif) no-repeat;border: none;background-size: 9px;}
 .accordionMenu ul li img.unfold{ background-position:0 -9px;}
 */
-.accordionMenu ul li .menuitem.submenu::after{
-    content: "";
-    display: inline-block;
-    border: 4px solid;
-    width: 0;
-    height: 0;
-    transition: transform .5s;
-    border-color: transparent transparent transparent #333;
-    position: absolute;
-    right: 2px;
-    top: 8px;
-}
-.accordionMenu ul li .menuitem.submenu.iconopen::after{
-    border-color: #333 transparent transparent transparent;
-}
-.accordionMenu ul li .menuitem.activeitem::before{
-    content: "";
-    display: inline-block;
-    width: 4px;
-    height:100%;
-    position: absolute;
-    left: 0;
-    top: 0;
-    background:#ff7400;
-}
-.accordionMenu ul li .menuitem:hover{
-    background:#ff7400;
-}
+.accordionMenu ul li .menuitem.submenu::after{content: "";display: inline-block;border: 4px solid;width: 0;height: 0;
+    transition: transform .5s;border-color: transparent transparent transparent #333;position: absolute;right: 2px;top: 8px;}
+.accordionMenu ul li .menuitem.submenu.iconopen::after{border-color: #333 transparent transparent transparent;}
+.accordionMenu ul li .menuitem.activeitem::before{content: "";display: inline-block;width: 4px;height:100%;
+    position: absolute;left: 0;top: 0;background:#ff7400;}
+.accordionMenu ul li .menuitem:hover{background:#ff7400;}
 .accordionMenu .lev-1>li>a{background: #9be9fa url(../images/btn_bg2.png) repeat-x 0 0;}
 .accordionMenu .lev-2>li>a{background: #fff294 url(../images/btn_bg3.png) repeat-x 0 0;}
 .accordionMenu .lev-3>li>a{background: #b9e4ba url(../images/btn_bg4.png) repeat-x 0 0;}

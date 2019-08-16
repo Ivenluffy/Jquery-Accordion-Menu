@@ -1,8 +1,8 @@
 (function ($) {
     /**
      * 手风琴菜单
-     * @param ele  {String} 菜单容器
-     * @param data {Array}  初始化菜单的数组
+     * @param {string} ele -菜单容器
+     * @param {array} data -初始化菜单的数组
      * 说明：由于属性及事件绑定在菜单标签属性中，初始化配置值option从标签属性中取得
      * <div id="accordion" idField="id" parentField="pid" nameField="text" childrenField="children" onnodeclick ="clickCallback"
      * onnodemouseenter="mouseEnterCallback" onnodemouseleave="MouseLeaveCallback" onmenurender="renderCallBack"></div>
@@ -22,7 +22,7 @@
             nodeClickEvent: this.$menu.attr("onnodeclick") ? eval(this.$menu.attr("onnodeclick")) : null,//菜单节点点击事件
             nodeMouseEnterEvent: this.$menu.attr("onnodemouseenter") ? eval(this.$menu.attr("onnodemouseenter")) : null,//鼠标进入节点事件
             nodeMouseLeaveEvent: this.$menu.attr("onnodemouseleave") ? eval(this.$menu.attr("onnodemouseleave")) : null,//鼠标离开节点事件
-            renderCallBack:this.$menu.attr("onmenurender") ? eval(this.$menu.attr("onmenurender")) : null//菜单加载渲染完后事件
+            renderCallBack: this.$menu.attr("onmenurender") ? eval(this.$menu.attr("onmenurender")) : null//菜单加载渲染完后事件
         };
         this.initAccordion();
     };
@@ -44,26 +44,26 @@
                 data = _this.getTreeData(_this.data);
             var ulhtml = $('<ul class="lev"></ul>');
             $(data).each(function (index, item) {
-                var lihtml = $('<li><a class="menuitem" id="menu_'+item[option.idField]+'">' + item[option.nameField] + '</a></li>');
+                var lihtml = $('<li><a class="menuitem" id="menu_' + item[option.idField] + '">' + item[option.nameField] + '</a></li>');
                 //赋值当前节点数据，并将该数据绑定到该节点标签中
-                var sender={
-                    $menu:_this.$menu,
-                    $target:lihtml.find("a.menuitem"),
-                    data:_this.copyObject(_this.data),
-                    option:_this.option,
-                    node:_this.copyObject(item),//当前项
-                    isLeaf:false//是否叶子节点
+                var sender = {
+                    $menu: _this.$menu,
+                    $target: lihtml.find("a.menuitem"),
+                    data: _this.copyObject(_this.data),
+                    option: _this.option,
+                    node: _this.copyObject(item),//当前项
+                    isLeaf: false//是否叶子节点
                 };
                 //删除该节点的子节点数组数据，只保留自身数据
-                if(option.childrenField in sender.node)delete sender.node[option.childrenField];
+                if (option.childrenField in sender.node) delete sender.node[option.childrenField];
                 //绑定数据到标签中
-                lihtml.find("a.menuitem").data("sender",sender);
+                lihtml.find("a.menuitem").data("sender", sender);
                 if (item[option.childrenField] && item[option.childrenField].length > 0) {
                     lihtml.find("a").addClass("submenu");
                     //创建子菜单
-                    _this.createSubMenu(_this, item[option.childrenField],item[option.idField], lihtml);
-                }else{
-                    sender.isLeaf=true;
+                    _this.createSubMenu(_this, item[option.childrenField], item[option.idField], lihtml);
+                } else {
+                    sender.isLeaf = true;
                 }
                 $(ulhtml).append(lihtml);
             });
@@ -75,127 +75,128 @@
         },
         /**
          * 创建子菜单
-         * @param accordion {Object} 菜单对象
-         * @param submenu   {Array}  子菜单
-         * @param pid       {String} 父节点ID
-         * @param lihtml    {Object} li项jq对象
+         * @param {object} accordion -菜单对象
+         * @param {array} submenu -子菜单
+         * @param {string} pid -父节点ID
+         * @param {object} lihtml -li项jq对象
          */
-        createSubMenu: function (accordion, submenu,pid, lihtml) {
+        createSubMenu: function (accordion, submenu, pid, lihtml) {
             var _this = accordion,
                 option = _this.option;
             var subUl = $('<ul></ul>'),
                 subLi;
             $(submenu).each(function (index, item) {
                 var url = item.url || 'javascript:void(0)';
-                subLi = $('<li><a class="menuitem" id="menu_'+item[option.idField]+'" href="' + url + '">' + item[option.nameField] + '</a></li>');
+                subLi = $('<li><a class="menuitem" id="menu_' + item[option.idField] + '" href="' + url + '">' + item[option.nameField] + '</a></li>');
                 //赋值当前节点数据，并将该数据绑定到该节点标签中
-                var sender={
-                    $menu:_this.$menu,
-                    $target:subLi.find("a.menuitem"),
-                    data:_this.copyObject(_this.data),
-                    option:_this.option,
-                    node:_this.copyObject(item),//当前项
-                    isLeaf:false//是否叶子节点
+                var sender = {
+                    $menu: _this.$menu,
+                    $target: subLi.find("a.menuitem"),
+                    data: _this.copyObject(_this.data),
+                    option: _this.option,
+                    node: _this.copyObject(item),//当前项
+                    isLeaf: false//是否叶子节点
                 };
                 //删除该节点的子节点数组数据，只保留自身数据
-                if(option.childrenField in sender.node)delete sender.node[option.childrenField];
+                if (option.childrenField in sender.node) delete sender.node[option.childrenField];
                 //绑定数据到标签中
-                sender.node[option.parentField]=pid;
-                subLi.find("a.menuitem").data("sender",sender);
+                sender.node[option.parentField] = pid;
+                subLi.find("a.menuitem").data("sender", sender);
                 if (item[option.childrenField] && item[option.childrenField].length > 0) {
                     $(subLi).children('a').addClass("submenu");
                     //收缩折叠三角图标，在a标签内文本右侧插入该图标，图片通过unfold控制展叠效果
                     //$(subLi).children('a').append('<img src="images/blank.gif" alt=""/>');
                     //递归调用，生成各级子菜单
-                    _this.createSubMenu(accordion, item[option.childrenField],item[option.idField], subLi);
-                }else{
-                    sender.isLeaf=true;
+                    _this.createSubMenu(accordion, item[option.childrenField], item[option.idField], subLi);
+                } else {
+                    sender.isLeaf = true;
                 }
                 $(subUl).append(subLi);
             });
             $(lihtml).append(subUl);
         },
-/*
-        renderMenuByListData:function(){
-            var _this = this,
-                container = _this.$menu,
-                option = _this.option,
-                data = _this.getListData("");
-            var ulhtml=$('<ul class="lev"></ul>');
-            $(data).each(function(index,item){
-                var isRoot=true;
-                for(var i=0;i<data.length;i++){
-                    if(item[option.parentField]==data[i][option.idField]){
-                        isRoot=false;
-                    }
-                }
-                if(isRoot){
-                    var lihtml = $('<li><a class="menuitem" id="'+item[option.idField]+'">' + item[option.nameField] + '</a></li>');
-                    //赋值当前节点数据，并将该数据绑定到该节点标签中
-                    var node=_this.copyObject(item);
-                    //删除该节点的子节点数组数据，只保留自身数据
-                    if(option.childrenField in node)delete node[option.childrenField];
-                    //绑定数据到标签中
-                    lihtml.find("a").data("node",node);
-                    var hasSub=false;
-                    for(var j=0;j<data.length;j++){
-                        if(data[j][option.parentField]==item[option.idField]){
-                            hasSub=true;
-                            break;
+        /*
+                renderMenuByListData:function(){
+                    var _this = this,
+                        container = _this.$menu,
+                        option = _this.option,
+                        data = _this.getListData("");
+                    var ulhtml=$('<ul class="lev"></ul>');
+                    $(data).each(function(index,item){
+                        var isRoot=true;
+                        for(var i=0;i<data.length;i++){
+                            if(item[option.parentField]==data[i][option.idField]){
+                                isRoot=false;
+                            }
                         }
-                    }
-                    if(hasSub){
-                        lihtml.find("a").addClass("submenu");
-                        _this.createSubMenu1(_this,item[option.idField],lihtml)
-                    }
-                    $(ulhtml).append(lihtml);
-                }
-            });
-            $(container).html("").append(ulhtml);
-            //菜单渲染完回调函数
-            option.renderCallBack && $.isFunction(eval(option.renderCallBack)) && eval(option.renderCallBack)(_this);
-            // 处理菜单层级缩进
-            _this.levelIndent(ulhtml);
-        },
-        createSubMenuByListData:function(accordion,pid, lihtml){
-            var _this = accordion,
-                option = _this.option,
-                data=_this.getListData();
-            var subUl = $('<ul></ul>'),
-                subLi;
-            $(data).each(function (index, item) {
-                if(item[option.parentField]==pid){
-                    var url = item.url || 'javascript:void(0)';
-                    subLi = $('<li><a class="menuitem" href="' + url + '">' + item[option.nameField] + '</a></li>');
-                    //赋值当前节点数据，并将该数据绑定到该节点标签中
-                    var node=_this.copyObject(item);
-                    //删除该节点的子节点数组数据，只保留自身数据
-                    if(option.childrenField in node)delete node[option.childrenField];
-                    //绑定数据到标签中
-                    node[option.parentField]=pid;
-                    subLi.find("a.menuitem").data("node",node);
-                    var hasSub=false;
-                    for(var i=0;i<data.length;i++){
-                        if(data[i][option.parentField]==item[option.idField]){
-                            hasSub=true;
-                            break;
+                        if(isRoot){
+                            var lihtml = $('<li><a class="menuitem" id="'+item[option.idField]+'">' + item[option.nameField] + '</a></li>');
+                            //赋值当前节点数据，并将该数据绑定到该节点标签中
+                            var node=_this.copyObject(item);
+                            //删除该节点的子节点数组数据，只保留自身数据
+                            if(option.childrenField in node)delete node[option.childrenField];
+                            //绑定数据到标签中
+                            lihtml.find("a").data("node",node);
+                            var hasSub=false;
+                            for(var j=0;j<data.length;j++){
+                                if(data[j][option.parentField]==item[option.idField]){
+                                    hasSub=true;
+                                    break;
+                                }
+                            }
+                            if(hasSub){
+                                lihtml.find("a").addClass("submenu");
+                                _this.createSubMenu1(_this,item[option.idField],lihtml)
+                            }
+                            $(ulhtml).append(lihtml);
                         }
-                    }
-                    if (hasSub) {
-                        $(subLi).children('a').addClass("submenu");
-                        //收缩折叠三角图标，在a标签内文本右侧插入该图标，图片通过unfold控制展叠效果
-                        //$(subLi).children('a').append('<img src="images/blank.gif" alt=""/>');
-                        //递归调用，生成各级子菜单
-                        _this.createSubMenu1(accordion,item[option.idField], subLi);
-                    }
-                    $(subUl).append(subLi);
-                }
-            });
-            $(lihtml).append(subUl);
-        },
-*/
+                    });
+                    $(container).html("").append(ulhtml);
+                    //菜单渲染完回调函数
+                    option.renderCallBack && $.isFunction(eval(option.renderCallBack)) && eval(option.renderCallBack)(_this);
+                    // 处理菜单层级缩进
+                    _this.levelIndent(ulhtml);
+                },
+                createSubMenuByListData:function(accordion,pid, lihtml){
+                    var _this = accordion,
+                        option = _this.option,
+                        data=_this.getListData();
+                    var subUl = $('<ul></ul>'),
+                        subLi;
+                    $(data).each(function (index, item) {
+                        if(item[option.parentField]==pid){
+                            var url = item.url || 'javascript:void(0)';
+                            subLi = $('<li><a class="menuitem" href="' + url + '">' + item[option.nameField] + '</a></li>');
+                            //赋值当前节点数据，并将该数据绑定到该节点标签中
+                            var node=_this.copyObject(item);
+                            //删除该节点的子节点数组数据，只保留自身数据
+                            if(option.childrenField in node)delete node[option.childrenField];
+                            //绑定数据到标签中
+                            node[option.parentField]=pid;
+                            subLi.find("a.menuitem").data("node",node);
+                            var hasSub=false;
+                            for(var i=0;i<data.length;i++){
+                                if(data[i][option.parentField]==item[option.idField]){
+                                    hasSub=true;
+                                    break;
+                                }
+                            }
+                            if (hasSub) {
+                                $(subLi).children('a').addClass("submenu");
+                                //收缩折叠三角图标，在a标签内文本右侧插入该图标，图片通过unfold控制展叠效果
+                                //$(subLi).children('a').append('<img src="images/blank.gif" alt=""/>');
+                                //递归调用，生成各级子菜单
+                                _this.createSubMenu1(accordion,item[option.idField], subLi);
+                            }
+                            $(subUl).append(subLi);
+                        }
+                    });
+                    $(lihtml).append(subUl);
+                },
+        */
         /**
          * 处理层级缩进
+         * @param {object} ulList -目标元素
          */
         levelIndent: function (ulList) {
             var initTextIndent = 1,
@@ -215,13 +216,13 @@
          */
         bindEvent: function () {
             var _this = this,
-                container=_this.$menu,
+                container = _this.$menu,
                 option = _this.option;
             //解绑hover和click事件
             $('a.menuitem', container).unbind("mouseenter").unbind("mouseleave").unbind("click");
             //绑定事件 event
             $('a.menuitem', container).bind({
-                click: function(e){//点击事件
+                click: function (e) {//点击事件
                     if ($(this).hasClass("submenu")) {//有子菜单，则展开或折叠
                         if ($(this).hasClass("iconopen")) {
                             //已经打开的菜单关闭
@@ -236,36 +237,43 @@
                     $(this).addClass("activeitem");
                     /**
                      * 菜单节点点击事件回调函数
-                     * @param1  菜单控件对象
-                     * @param2  当前点击节点jQuery对象
-                     * @param3  当前点击节点数据
+                     * @param {object} sender 菜单控件对象及节点信息
                      */
                     option.nodeClickEvent && $.isFunction(eval(option.nodeClickEvent)) && eval(option.nodeClickEvent)($(this).data("sender"));
                 },
-                mouseenter: function(e){//鼠标进入事件
-                    $(this).attr("title",$(this).text());
+                mouseenter: function (e) {//鼠标进入事件
+                    $(this).attr("title", $(this).text());
+                    /**
+                     * 鼠标进入菜单节点事件回调函数
+                     *@param {object} sender 菜单控件对象及节点信息
+                     * */
                     option.nodeMouseEnterEvent && $.isFunction(eval(option.nodeMouseEnterEvent)) && eval(option.nodeMouseEnterEvent)($(this).data("sender"));
                 },
-                mouseleave: function(e){//鼠标离开事件
+                mouseleave: function (e) {//鼠标离开事件
                     $(this).removeAttr("title");
+                    /**
+                     * 鼠标离开菜单节点事件回调函数
+                     * @param {object} sender 菜单控件对象及节点信息
+                     * */
                     option.nodeMouseEnterEvent && $.isFunction(eval(option.nodeMouseEnterEvent)) && eval(option.nodeMouseEnterEvent)($(this).data("sender"));
                 }
             });
         },
         /**
          * 将数组数据转为一维数组结构数据。rootPidValue为根节点pid的默认值，自行定义
-         * @param treeData     {Array} 树状结构数据，为空则默认将初始传入数据转为List结构数据
-         * @param rootPidValue {String|Int|Object} 转化时如果根目录pid没设值，可传值作为默认值，默认为空字符串
+         * @param {array} treeData -树状结构数据，为空则默认将初始传入数据转为List结构数据
+         * @param {*} rootPidValue -转化时如果根目录pid没设值，可传值作为默认值，默认为空字符串
+         * @returns {array}
          */
         getListData: function (treeArr) {
-            var data = treeArr?this.copyObject(treeArr):this.copyObject(this.data);
+            var data = treeArr ? this.copyObject(treeArr) : this.copyObject(this.data);
             var arr = [];
             var _this = this;
             function fn(data, arr, pid) {
                 for (var i = 0; i < data.length; i++) {
                     //赋值对象值并进行修改而不影响被复制对象的值
                     var obj = _this.copyObject(data[i]);
-                    obj[_this.option.parentField] = _this.option.parentField in data[i]?data[i][_this.option.parentField]:pid;
+                    obj[_this.option.parentField] = _this.option.parentField in data[i] ? data[i][_this.option.parentField] : pid;
                     //删除子节点数组属性
                     if (_this.option.childrenField in obj) delete obj[_this.option.childrenField];
                     arr.push(obj);
@@ -279,10 +287,11 @@
         },
         /**
          * 将一维数组数据转树状数组数据
-         * @param listData {Array} List结构数据,为空则默认将初始传入数据转为树状结构数据
+         * @param {array} listData -List结构数据,为空则默认将初始传入数据转为树状结构数据
+         * @returns {array}
          */
         getTreeData: function (listArr) {
-            var data = listArr?this.copyObject(listArr):this.copyObject(this.data);
+            var data = listArr ? this.copyObject(listArr) : this.copyObject(this.data);
             for (var i = 0; i < data.length; i++) {
                 //是否叶子节点，从叶子节点开始到跟节点逐步构建TreeData格式数据
                 var isLeaf = true;
@@ -309,70 +318,76 @@
             }
             //删除第一维数组各项的pid属性
             // for (var i = 0; i < data.length; i++) {
-                // if (this.option.parentField in data[i]) delete data[i][this.option.parentField];
+            // if (this.option.parentField in data[i]) delete data[i][this.option.parentField];
             // }
             return data;
         },
         /**
          * 获取初始传入数据
+         * @returns {array}
          */
-        getData:function() {
+        getData: function () {
             return this.data;
         },
         /**
          * 获取当前选择的节点
+         * @returns {object}
          */
-        getSelectNode:function(){
+        getSelectNode: function () {
             return this.$menu.find("a.activeitem").data("sender").node;
         },
         /**
          * 获取父节点
-         * @param {node} 目标节点
+         * @param {object} node -目标节点
+         * @returns {object}
          */
         getParentNode: function (node) {
             return this.getNode(node[this.option.parentField]);
         },
         /**
          * 获取直接下级子节点
-         * @param node {Object} 目标节点
+         * @param {object} node -目标节点
+         * @returns {array}
          */
-        getChildNodes:function(node){
-            var arr=[];
-            var data=this.getListData();
-            for(var i=0;i<data.length;i++){
-                if(data[i][this.option.parentField]==node[this.option.idField])arr.push(data[i]);
+        getChildNodes: function (node) {
+            var arr = [];
+            var data = this.getListData();
+            for (var i = 0; i < data.length; i++) {
+                if (data[i][this.option.parentField] == node[this.option.idField]) arr.push(data[i]);
             }
             return arr;
         },
         /**
          * 获取该节点下所有层级级子节点
-         * @param  node {Object} 目标节点
+         * @param {object} node -目标节点
+         * @returns {array}
          */
-        getAllChildNodes:function(node){
-            var data=this.copyObject(this.getListData());
-            var option=this.option;
-            function getSub(arr,data,pid){
-                for(var i=0;i<data.length;i++){
-                    if(data[i][option.parentField]==pid){
+        getAllChildNodes: function (node) {
+            var data = this.copyObject(this.getListData());
+            var option = this.option;
+            function getSub(arr, data, pid) {
+                for (var i = 0; i < data.length; i++) {
+                    if (data[i][option.parentField] == pid) {
                         arr.push(data[i]);
-                        getSub(arr,data,data[i][option.idField]);
-                        data.splice(i,1);
-                        i=0;
+                        getSub(arr, data, data[i][option.idField]);
+                        data.splice(i, 1);
+                        i = 0;
                     }
                 }
                 return arr;
             }
-            return getSub([],data,node[option.idField]);
+            return getSub([], data, node[option.idField]);
         },
         /**
          * 根据节点ID获取节点
-         * @param id {String|Int|Object} 要获取节点的id
+         * @param {*} id -要获取节点的id
+         * @returns {object}
          */
-        getNode(id){
-            var data=this.getListData();
-            var option=this.option;
-            for(var i=0;i<data.length;i++){
-                if(data[i][option.idField]==id){
+        getNode(id) {
+            var data = this.getListData();
+            var option = this.option;
+            for (var i = 0; i < data.length; i++) {
+                if (data[i][option.idField] == id) {
                     return data[i];
                 }
             }
@@ -380,13 +395,17 @@
         },
         /**
          * 复制对象，防止修改原对象值
-         * @param obj {Object} 原对象
+         * @param {object} obj -原对象
+         * @returns {object}
          */
-        copyObject:function(obj){
-            //Object.assign()无法深度复制
+        copyObject: function (obj) {
+            //object.assign()无法深度复制
             return JSON.parse(JSON.stringify(obj));
         }
     };
+    /**
+     *jquery扩展accordion手风琴菜单
+     */
     $.fn.accordion = function () {
         //初始化数据为空时，默认赋值空数组
         if (arguments.length === 0) {
