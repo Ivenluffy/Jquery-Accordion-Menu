@@ -11,8 +11,9 @@
 	</style>
 </head>
 <body>
-<div id="box1"   idField="id" nameField="text" childrenField="children" onnodeclick ="nodeClick" onnodemouseenter="showinfo" onnodemouseleave="leavenode"  onmenurender="finishrender" style="width:150px;margin:30px auto;"></div>
-<div id="box2"  idField="id" nameField="text" parentField="pid" onnodeclick ="nodeClick" onnodemouseenter="showinfo" onnodemouseleave="leavenode"  onmenurender="finishrender" style="width:180px;margin:50px auto;"></div>
+<div id="box1"   idField="id" nameField="text" childrenField="children" onnodeclick ="nodeClick" onnodemouseenter="enternode" onnodemouseleave="leavenode"  onmenurender="finishrender" style="width:150px;margin:30px auto;"></div>
+<div id="box2"  idField="id" nameField="text" parentField="pid" onnodeclick ="nodeClick" onnodemouseenter="enternode" onnodemouseleave="leavenode"  onmenurender="finishrender" style="width:180px;margin:50px auto;"></div>
+<div id="box3"  idField="id" nameField="name" parentField="pid" url="menu.json"  onnodeclick ="nodeClick" onnodemouseenter="enternode" onnodemouseleave="leavenode"  onmenurender="finishrender" style="width:180px;margin:50px auto;"></div>
 </body>
 </html>
 <script>
@@ -122,19 +123,21 @@
                   }
     ];
     //数状结构数据加载
-    var menu=$("#box1").accordion(treeArr);
+    var menu1=$("#box1").accordion(treeArr);
     //一维结构数据加载
-    var menu=$("#box2").accordion(listArr);
-    function showinfo(sender){
-
+    var menu2=$("#box2").accordion(listArr);
+	var menu3=$("#box3").accordion();
+    function enternode(sender){
+        //console.log(sender.node)
     }
     function nodeClick(sender){
-        console.log(sender)
+        console.log(sender.node)
     }
     function leavenode(sender){
-
+        //console.log(sender.node)
     }
     function finishrender(sender){
+	    console.log(sender);
         console.log("菜单成功加载...")
     }
 </script>

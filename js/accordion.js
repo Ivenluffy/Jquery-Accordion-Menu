@@ -11,22 +11,42 @@
     var Accordion = function (ele, data) {
         //菜单容器
         this.$menu = $(ele).addClass("accordionMenu");
-        //传入初始化菜单的数组，可以使一维数组ListArray，也可以是数组结构数组TreeArray
-        this.data = (data && Array.isArray(data)) ? data : [];
         //初始化配置值可从标签属性中取得即可
         this.option = {
             idField: this.$menu.attr("idField") ? this.$menu.attr("idField") : "id",//字段名,默认值为id
             parentField: this.$menu.attr("parentField") ? this.$menu.attr("parentField") : "pid",//父节点字段名,初始化数据为ListArray结构时需设置，以防出错，TreeArray数据可不设置，默认值位pid
             nameField: this.$menu.attr("nameField") ? this.$menu.attr("nameField") : "name",//节点显示文本
             childrenField: this.$menu.attr("childrenField") ? this.$menu.attr("childrenField") : "children",//子节点集，初始化数据TreeArray为树结构数据时需设置，以防出错，ListArray数据可不设置，默认值是children
+            url:this.$menu.attr("url")?this.$menu.attr("url"):"",//url加载数据初始化菜单。优先以传参data数组数据初始化菜单,若不传参则以url方式加载初始化，都不存在则默认空数组
             nodeClickEvent: this.$menu.attr("onnodeclick") ? eval(this.$menu.attr("onnodeclick")) : null,//菜单节点点击事件
             nodeMouseEnterEvent: this.$menu.attr("onnodemouseenter") ? eval(this.$menu.attr("onnodemouseenter")) : null,//鼠标进入节点事件
             nodeMouseLeaveEvent: this.$menu.attr("onnodemouseleave") ? eval(this.$menu.attr("onnodemouseleave")) : null,//鼠标离开节点事件
-            renderCallBack: this.$menu.attr("onmenurender") ? eval(this.$menu.attr("onmenurender")) : null//菜单加载渲染完后事件
+            renderCallBack: this.$menu.attr("onmenurender") ? eval(this.$menu.attr("onmenurender")) : null//菜单加载渲染完后事件,
         };
+        //传入初始化菜单的数组，可以使一维数组ListArray，也可以是数组结构数组TreeArray
+        this.data = (data && Array.isArray(data)&&data.length>0) ? data : this.getUrlData();
         this.initAccordion();
     };
     Accordion.prototype = {
+        /**
+         * 通过url加载数据初始化菜单
+         * @returns {array}
+         * */
+        getUrlData:function(){
+            var data=[];
+            var url=this.option.url;
+            if(url){
+                var xhr=new XMLHttpRequest();
+                xhr.open("GET",url,false);
+                xhr.onreadystatechange=function(){
+                    if(xhr.readyState==4&&xhr.status==200){
+                        data=typeof xhr.responseText=='string'?JSON.parse(xhr.responseText):xhr.responseText;
+                    }
+                };
+                xhr.send(null);
+            }
+            return data;
+        },
         /**
          * 初始化手风琴菜单
          */
@@ -404,9 +424,10 @@
         }
     };
     /**
-     *jquery扩展accordion手风琴菜单
+     * jquery扩展accordion手风琴菜单
+     * @param {array} arr -初始化菜单数组
      */
-    $.fn.accordion = function () {
+    $.fn.accordion = function (arr) {
         //初始化数据为空时，默认赋值空数组
         if (arguments.length === 0) {
             arguments[0] == [];
