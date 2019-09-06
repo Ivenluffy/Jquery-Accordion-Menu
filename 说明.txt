@@ -12,6 +12,7 @@
                  parentField: "pid",//父节点字段名,初始化数据为ListArray结构时需设置，以防出错，TreeArray数据可不设置，默认值位pid
                  nameField:"name",//节点显示文本,默认值name
                  childrenField:"children",//子节点集，初始化数据TreeArray为树结构数据时需设置，以防出错，ListArray数据可不设置，默认值是children
+		 url: this.$menu.attr("url") ? this.$menu.attr("url") : "",//url加载数据初始化菜单,仅支持GET方法。优先以传参data数组数据初始化菜单,若不传参则以url方式加载初始化，都不存在则默认空数组
                  nodeClickEvent: null,//菜单节点点击事件,默认为null
                  nodeMouseEnterEvent:null,//鼠标进入节点事件
                  nodeMouseLeaveEvent:: null,//鼠标离开节点事件
