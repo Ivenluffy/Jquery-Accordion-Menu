@@ -17,7 +17,7 @@
             parentField: this.$menu.attr("parentField") ? this.$menu.attr("parentField") : "pid",//父节点字段名,初始化数据为ListArray结构时需设置，以防出错，TreeArray数据可不设置，默认值位pid
             nameField: this.$menu.attr("nameField") ? this.$menu.attr("nameField") : "name",//节点显示文本
             childrenField: this.$menu.attr("childrenField") ? this.$menu.attr("childrenField") : "children",//子节点集，初始化数据TreeArray为树结构数据时需设置，以防出错，ListArray数据可不设置，默认值是children
-            url:this.$menu.attr("url")?this.$menu.attr("url"):"",//url加载数据初始化菜单。优先以传参data数组数据初始化菜单,若不传参则以url方式加载初始化，都不存在则默认空数组
+            url:this.$menu.attr("url")?this.$menu.attr("url"):"",//url加载数据初始化菜单,仅支持GET方法。优先以传参data数组数据初始化菜单,若不传参则以url方式加载初始化，都不存在则默认空数组
             nodeClickEvent: this.$menu.attr("onnodeclick") ? eval(this.$menu.attr("onnodeclick")) : null,//菜单节点点击事件
             nodeMouseEnterEvent: this.$menu.attr("onnodemouseenter") ? eval(this.$menu.attr("onnodemouseenter")) : null,//鼠标进入节点事件
             nodeMouseLeaveEvent: this.$menu.attr("onnodemouseleave") ? eval(this.$menu.attr("onnodemouseleave")) : null,//鼠标离开节点事件
@@ -29,7 +29,7 @@
     };
     Accordion.prototype = {
         /**
-         * 通过url加载数据初始化菜单
+         * 通过url获取数据后初始化菜单
          * @returns {array}
          * */
         getUrlData:function(){
@@ -219,13 +219,13 @@
          * @param {object} ulList -目标元素
          */
         levelIndent: function (ulList) {
-            var initTextIndent = 1,
+            var initTextIndent = 0,
                 lev = 1,
                 $oUl = $(ulList);
             while ($oUl.find('ul').length > 0) {
-                initTextIndent = parseFloat(initTextIndent, 10) + 0.7 + 'em';
+                initTextIndent = parseFloat(initTextIndent, 10) + 0.6 + 'em';
                 $oUl.children().children('ul').addClass('lev-' + lev)
-                    .children('li').css('text-indent', initTextIndent);
+                    .children('li').children('a').css('padding-left', initTextIndent);
                 $oUl = $oUl.children().children('ul');
                 lev++;
             }

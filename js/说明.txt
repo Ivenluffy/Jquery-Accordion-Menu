@@ -1,0 +1,134 @@
+﻿    /**
+     * 手风琴菜单
+     * 说明：由于属性及事件绑定在菜单标签属性中，初始化配置值option从标签属性中取得
+     * <div id="accordion" idField="id" parentField="pid" nameField="text" childrenField="children" onnodeclick ="clickCallback"
+     * onnodemouseenter="mouseEnterCallback" onnodemouseleave="MouseLeaveCallback" onmenurender="renderCallBack"></div>
+     * 调用：$("#accordion").accordion(arrData);
+     * @param {arrData} 初始化菜单的数组数据
+     */
+     //初始化配置option
+     option = {
+                 idField:"id",//字段名,默认值为id
+                 parentField: "pid",//父节点字段名,初始化数据为ListArray结构时需设置，以防出错，TreeArray数据可不设置，默认值位pid
+                 nameField:"name",//节点显示文本,默认值name
+                 childrenField:"children",//子节点集，初始化数据TreeArray为树结构数据时需设置，以防出错，ListArray数据可不设置，默认值是children
+				 url: this.$menu.attr("url") ? this.$menu.attr("url") : "",//url加载数据初始化菜单,仅支持GET方法。优先以传参data数组数据初始化菜单,若不传参则以url方式加载初始化，都不存在则默认空数组
+                 nodeClickEvent: null,//菜单节点点击事件,默认为null
+                 nodeMouseEnterEvent:null,//鼠标进入节点事件
+                 nodeMouseLeaveEvent:: null,//鼠标离开节点事件
+                 renderCallBack:null//菜单加载渲染完后事件
+     };
+
+     //方法：
+	var menu=$("#accordion").accordion(arrData);
+	menu.getData(),menu.getNode(id),menu.getSelectNode(),menu.getParentNode(node),
+	menu.getChildNodes(node),menu.getAllChildNodes(node)...
+
+     //事件：
+	onnodeclick ，
+	onnodemouseenter,
+	onnodemouseleave，
+	onmenurender....
+
+     //数据格式1：
+       TreeArray = [
+     {
+         id: "window",
+         text: "Window",
+         children: [
+           {
+               id: "control",
+               text: "Control",
+               children: [
+                 {
+                     id: "messagebox",
+                     text: "MessageBox"
+                 },
+                 {
+                     id: "forms",
+                     text: "Forms",
+                     children: [
+                       {
+                           id: "button",
+                           text: "Button"
+                       }
+                     ]
+                 },
+
+               ]
+           }
+         ]
+     },
+     {
+         id: "lists",
+         text: "Lists",
+         children: [
+           {
+               id: "datagrid",
+               text: "DataGrid"
+           },
+           {
+               id: "tree",
+               text: "Tree",
+               children: [
+                 {
+                     id: "treegrid",
+                     text: "TreeGrid "
+                 }
+               ]
+           }
+         ]
+     }
+    ];
+
+
+
+    //数据格式2：
+        ListData = [
+                  {
+                      "id": "window",
+                      "text": "Window",
+                      "pid": ""
+                  },
+                  {
+                      "id": "control",
+                      "text": "Control",
+                      "pid": "window"
+                  },
+                  {
+                      "id": "messagebox",
+                      "text": "MessageBox",
+                      "pid": "control"
+                  },
+                  {
+                      "id": "forms",
+                      "text": "Forms",
+                      "pid": "control"
+                  },
+                  {
+                      "id": "button",
+                      "text": "Button",
+                      "pid": "forms"
+                  },
+                  {
+                      "id": "lists",
+                      "text": "Lists",
+                      "pid": ""
+                  },
+                  {
+                      "id": "datagrid",
+                      "text": "DataGrid",
+                      "pid": "lists"
+                  },
+                  {
+                      "id": "tree",
+                      "text": "Tree",
+                      "pid": "lists"
+                  },
+                  {
+                      "id": "treegrid",
+                      "text": "TreeGrid ",
+                      "pid": "tree"
+                  }
+    ]
+;
