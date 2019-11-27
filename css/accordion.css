@@ -19,7 +19,7 @@
 }
 .accordionMenu ul li .menuitem.activeitem::before{content: "";display: inline-block;width: 4px;height:100%;
     position: absolute;left: 0;top: 0;background:#ff7400;}
-.accordionMenu ul li .menuitem:hover{background:#ff7400;}
+.accordionMenu ul li .menuitem:hover{background:#ff7400;color:#fff;}
 .accordionMenu .lev-1>li>a{background: #9be9fa url(../images/btn_bg2.png) repeat-x 0 0;}
 .accordionMenu .lev-2>li>a{background: #fff294 url(../images/btn_bg3.png) repeat-x 0 0;}
 .accordionMenu .lev-3>li>a{background: #b9e4ba url(../images/btn_bg4.png) repeat-x 0 0;}
