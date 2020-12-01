@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Accordion menu</title>
+    <!--<link rel="stylesheet" href="css/bootstrap.css">-->
+    <link rel="stylesheet" href="css/accordion.css">
+    <script src="js/accordion.js"></script>
+    <style>
+        .box{padding:30px;}
+        .accordion{width:200px;
+            margin-top: 20px;}
+    </style>
+</head>
+<body>
+<div class="box">
+    <div class="accordion" idField="Id" parentField="ParentId" nameField="MenuName" iconField="MenuIcon"
+         sortName="Seq" sortOrder="asc" childrenField="children" url="data/tree.json" ajaxType="get"
+         ajaxData='{"name":"test"}' asTreeData="true" data="" indentStep="1.5" startColor="#000" endColor="#ccc"
+         colorCount="4" speed="500" onnodeclick="clickFn" onnodemouseenter="enterFn" onnodemouseleave="leaveFn"
+         onmenuready="renderFn">
+    </div>
+</div>
+</body>
+</html>
+<script>
+    var menu=new Accordion(".accordion",{});
+    function clickFn(sender,e){
+        console.log(sender)
+    }
+    function enterFn(sender,e){
+        //console.log('enter')
+    }
+    function leaveFn(sender,e){
+        //console.log('leave')
+    }
+    function renderFn(m){
+        //console.log(m)
+    }
+</script>
