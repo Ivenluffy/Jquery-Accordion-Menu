@@ -31,11 +31,14 @@
     color: #fff;
     text-decoration: none;
     position: relative;
-    box-sizing: border-box;
     white-space: nowrap;
+    -ms-text-overflow: ellipsis;
     text-overflow: ellipsis;
     overflow: hidden;
     cursor: default;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 .accordion ul li .menuitem > i {
@@ -56,11 +59,25 @@
     border: 6px solid;
     width: 0;
     height: 0;
-    transition: transform .5s;
     border-color: transparent transparent transparent #fff;
     position: absolute;
-    right: 4px;
-    top: 8px;
+    right: 2px;
+    top: 50%;
+    -webkit-transform: rotate(0deg) translate(0,-6px) ;
+    -moz-transform: rotate(0deg) translate(0,-6px) ;
+    -ms-transform: rotate(0deg) translate(0,-6px) ;
+    -o-transform: rotate(0deg) translate(0,-6px) ;
+    transform: rotate(0deg) translate(0,-6px);
+    -webkit-transform-origin:25% center;
+    -moz-transform-origin:25% center;
+    -ms-transform-origin:25% center;
+    -o-transform-origin:25% center;
+    transform-origin:25% center;
+    -webkit-transition: transform .3s;
+    -moz-transition: transform .3s;
+    -ms-transition: transform .3s;
+    -o-transition: transform .3s;
+    transition: transform .3s;
 }
 
 .accordion ul li .menuitem.submenu {
@@ -72,9 +89,11 @@
 }
 
 .accordion ul li .menuitem.submenu.iconopen::after {
-    border-width: 6px;
-    right: 6px;
-    border-color: #fff transparent transparent transparent;
+    -webkit-transform: rotate(90deg) translate(-6px,3px) ;
+    -moz-transform: rotate(90deg) translate(-6px,3px) ;
+    -ms-transform: rotate(90deg) translate(-6px,3px) ;
+    -o-transform: rotate(90deg) translate(-6px,3px) ;
+    transform: rotate(90deg) translate(-6px,3px);
 }
 
 .accordion ul li .menuitem.activeitem::before {
@@ -98,8 +117,3 @@
     color: #ffff00;
     opacity: 0.8;
 }
-
-
-
-
-
