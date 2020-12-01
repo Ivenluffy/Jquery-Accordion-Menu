@@ -20,20 +20,21 @@
      * @returns {object} 合并后对象
      */
     function extend(target, source, override) {
-        override = typeof override === "undefined" ? true : convertToBool(override);
+        override = typeof override === "undefined" ? true : toBool(override);
         for (var key in source) {
             if (target.hasOwnProperty(key) && !override) continue;
             target[key] = source[key];
         }
         return target;
     }
+
     /**
      * 转换为布尔值
      * 对于0、-0、null、undefined、NaN、false、""、”false“字符串(不区分大小写)都转为false处理
      * @param {object} value -要转换的目标
      * @returns {boolean} 返回布尔值
      */
-    function convertToBool(value) {
+    function toBool(value) {
         return (typeof value === "string" && value.toLowerCase() === "false") ? false : Boolean(value);
     }
 
@@ -44,9 +45,9 @@
      * @param {function} fn -指定要事件触发时执行的函数。注意:若fn为匿名函数则无法通过removeEventListener方法移除该事件
      * @param {boolean} useCapture -布尔值，指定事件是否在捕获或冒泡阶段执行;true-事件句柄在捕获阶段执行,false(默认)-事件句柄在冒泡阶段执行
      */
-    function addEventHandler(ele, event, fn, useCapture) {
+    function addEvent(ele, event, fn, useCapture) {
         //useCapture undefined即默认false
-        useCapture = convertToBool(useCapture);
+        useCapture = toBool(useCapture);
         ele.addEventListener ? ele.addEventListener(event, fn, useCapture) : (ele.attachEvent ? ele.attachEvent("on" + event, fn, useCapture) : ele["on" + event] = fn);
     }
 
@@ -57,8 +58,8 @@
      * @param {function} fn -指定要移除的函数。注意:若addEventListener使用的fn为匿名函数则无法通过removeEventListener方法移除该事件
      * @param {boolean} useCapture -布尔值，指定移除事件句柄的阶段;true-在捕获阶段移除事件句柄,false(默认)-在冒泡阶段移除事件句柄
      */
-    function removeEventHandler(ele, event, fn, useCapture) {
-        useCapture = convertToBool(useCapture);
+    function removeEvent(ele, event, fn, useCapture) {
+        useCapture = toBool(useCapture);
         ele.removeEventListener ? ele.removeEventListener(event, fn, useCapture) : ele.detachEvent("on" + event, fn, useCapture);
     }
 
@@ -96,7 +97,7 @@
      * 创建XMLHttpRequest对象
      * @returns {XMLHttpRequest|null}
      */
-    function createXMLHttpRequest() {
+    function createRequest() {
         if (window.XMLHttpRequest) {
             //DOM 2浏览器
             return new XMLHttpRequest();
@@ -113,6 +114,150 @@
             }
         }
         return null;
+    }
+
+    /**
+     * 获取渐变梯度颜色组
+     * @param {string} sColor -开始渐变色(HEX十六进制颜色码)
+     * @param {string} eColor -结束渐变色(HEX十六进制颜色码)
+     * @param {number} step -开始至结束颜色过渡段数
+     * @returns {Array}
+     */
+
+    function gradientColors(sColor, eColor, step) {
+        var startRGB = getRgbColor(sColor);//转换为rgb数组模式
+        var startR = startRGB[0];
+        var startG = startRGB[1];
+        var startB = startRGB[2];
+        var endRGB = getRgbColor(eColor);
+        var endR = endRGB[0];
+        var endG = endRGB[1];
+        var endB = endRGB[2];
+        var sR = (endR - startR) / step;//总差值
+        var sG = (endG - startG) / step;
+        var sB = (endB - startB) / step;
+        var colorArr = [];
+        for (var i = 0; i < step; i++) {
+            //计算每一步的hex值
+            var hex = getHexColor('rgb(' + parseInt((sR * i + startR)) + ',' + parseInt((sG * i + startG)) + ',' + parseInt((sB * i + startB)) + ')');
+            colorArr.push(hex);
+        }
+        return colorArr;
+
+        /**
+         * 将hex表示方式颜色转换为rgb表示方式颜色(这里返回rgb数组模式)
+         * @param {string} color -HEX十六进制颜色码
+         * @returns {array}
+         */
+        function getRgbColor(color) {
+            var reg = /^#([0-9a-fA-f]{3}|[0-9a-fA-f]{6})$/;
+            var color = color.toLowerCase();
+            if (color && reg.test(color)) {
+                if (color.length === 4) {
+                    var sColorNew = "#";
+                    for (var i = 1; i < 4; i += 1) {
+                        sColorNew += color.slice(i, i + 1).concat(color.slice(i, i + 1));
+                    }
+                    color = sColorNew;
+                }
+                //处理六位的颜色值
+                var sColorChange = [];
+                for (var i = 1; i < 7; i += 2) {
+                    sColorChange.push(parseInt("0x" + color.slice(i, i + 2)));
+                }
+                return sColorChange;
+            } else {
+                return color;
+            }
+        }
+
+        /**
+         * 将rgb表示方式转换为hex表示方式
+         * @param {string} rgb -rgb颜色
+         * @returns {string}
+         */
+        function getHexColor(rgb) {
+            var _this = rgb;
+            var reg = /^#([0-9a-fA-f]{3}|[0-9a-fA-f]{6})$/;
+            if (/^(rgb|RGB)/.test(_this)) {
+                var aColor = _this.replace(/(?:(|)|rgb|RGB)*/g, "").split(",");
+                var strHex = "#";
+                for (var i = 0; i < aColor.length; i++) {
+                    var hex = Number(aColor[i]).toString(16);
+                    hex = hex < 10 ? 0 + '' + hex : hex;// 保证每个rgb的值为2位
+                    if (hex === "0") {
+                        hex += hex;
+                    }
+                    strHex += hex;
+                }
+                if (strHex.length !== 7) {
+                    strHex = _this;
+                }
+                return strHex;
+            } else if (reg.test(_this)) {
+                var aNum = _this.replace(/#/, "").split("");
+                if (aNum.length === 6) {
+                    return _this;
+                } else if (aNum.length === 3) {
+                    var numHex = "#";
+                    for (var i = 0; i < aNum.length; i += 1) {
+                        numHex += (aNum[i] + aNum[i]);
+                    }
+                    return numHex;
+                }
+            } else {
+                return _this;
+            }
+        }
+    }
+
+    /**********数组排序************/
+    /**
+     * 对树状对象数组进行排序
+     * @param {array} treeData -树状对象数组
+     * @param {string} childrenField -子节点数组名称
+     * @param {string} sortField -排序字段名称
+     * @param {string} sortMode -排序方式asc/desc,默认asc
+     * @returns {array} 返回排序后数组，改变原素组
+     */
+    function sortTreeArr(treeData, childrenField, sortField, sortMode) {
+        sortMode = sortMode || 'asc';
+        if (!sortField) return treeData;
+        var n = 1;
+        if (sortMode && sortMode.toLowerCase() == "desc") n = -1;
+        for (var i = 0; i < treeData.length; i++) {
+            if (treeData[i][childrenField])
+                sortTreeArr(treeData[i][childrenField], childrenField, sortField, sortMode)
+        }
+        sortArr(treeData, sortMode, sortField);
+        return treeData;
+    }
+
+    /**
+     * 数组排序
+     * @param {array} arr 目标数组
+     * @param {string} sortMode 排序方式,asc升序,desc降序
+     * @param {string} sortField 排序字段，没有则为空
+     * @returns {array} 返回排序后数组，改变原素组
+     */
+    function sortArr(arr, sortMode, sortField) {
+        sortField = sortField || '';
+        var n = 1;
+        if (sortMode && sortMode.toLowerCase() == "desc") n = -1;
+        arr.sort(function (a, b) {
+            var a1, b1;
+            a1 = sortField ? a[sortField] : a;
+            b1 = sortField ? b[sortField] : b;
+            if (a1 > b1) {
+                return 1 * n;
+            }
+            else if (a1 < b1) {
+                return -1 * n;
+            } else {
+                return 0 * n;
+            }
+        });
+        return arr;
     }
 
     //#endregion
@@ -147,7 +292,8 @@
         if (ktype !== "undefined" && vtype === "undefined") {
             return (_dataname in this && key in this[_dataname]) ? this[_dataname][key] : undefined;
         }
-    };
+    }
+
     /**
      * 移除之前通过elData()法设置的数据，返回当前dom节点
      * @param {string} key -可选,规定要移除的数据的名称。如果没有规定名称，该方法将从被选元素中移除所有已存储的数据。
@@ -165,7 +311,8 @@
             if (_dataname in this && key in this[_dataname]) delete this[_dataname][key];
         }
         return this;
-    };
+    }
+
     /**
      * 以滑动方式显示节点
      * @param {number} millisecond 滑动速度(完成滑动所需时间ms)
@@ -189,7 +336,8 @@
                 }
             }, 30);//间隔时间不要设置过小或过大,设置过小interval时间误差越大，设置间隔过大达不到动画效果
         }
-    };
+    }
+
     /**
      * 以滑动方式隐藏节点
      * @param {number} millisecond -滑动速度(完成滑动所需时间ms)
@@ -209,158 +357,6 @@
                 }
             }, 30);
         }
-    };
-
-    //#endregion
-
-    //#region 颜色梯度渐变区间段
-    /**
-     * 渐变颜色组
-     * @param {string} startColor -开始渐变色(HEX十六进制颜色码)
-     * @param {string} endColor -结束渐变色(HEX十六进制颜色码)
-     * @param {number} step -开始至结束颜色过渡段数
-     * @returns {Array}
-     */
-    function gradientColor(startColor, endColor, step) {
-        if (!(this instanceof gradientColor)) {
-            return new gradientColor(startColor, endColor, step)
-        }
-        var startRGB = this.colorRgb(startColor);//转换为rgb数组模式
-        var startR = startRGB[0];
-        var startG = startRGB[1];
-        var startB = startRGB[2];
-        var endRGB = this.colorRgb(endColor);
-        var endR = endRGB[0];
-        var endG = endRGB[1];
-        var endB = endRGB[2];
-        var sR = (endR - startR) / step;//总差值
-        var sG = (endG - startG) / step;
-        var sB = (endB - startB) / step;
-        var colorArr = [];
-        for (var i = 0; i < step; i++) {
-            //计算每一步的hex值
-            var hex = this.colorHex('rgb(' + parseInt((sR * i + startR)) + ',' + parseInt((sG * i + startG)) + ',' + parseInt((sB * i + startB)) + ')');
-            colorArr.push(hex);
-        }
-        return colorArr;
-    }
-
-    gradientColor.prototype = {
-        constructor: gradientColor,
-        /**
-         * 将hex表示方式转换为rgb表示方式(这里返回rgb数组模式)
-         * @param {string} sColor -HEX十六进制颜色码
-         */
-        colorRgb: function (sColor) {
-            var reg = /^#([0-9a-fA-f]{3}|[0-9a-fA-f]{6})$/;
-            var sColor = sColor.toLowerCase();
-            if (sColor && reg.test(sColor)) {
-                if (sColor.length === 4) {
-                    var sColorNew = "#";
-                    for (var i = 1; i < 4; i += 1) {
-                        sColorNew += sColor.slice(i, i + 1).concat(sColor.slice(i, i + 1));
-                    }
-                    sColor = sColorNew;
-                }
-                //处理六位的颜色值
-                var sColorChange = [];
-                for (var i = 1; i < 7; i += 2) {
-                    sColorChange.push(parseInt("0x" + sColor.slice(i, i + 2)));
-                }
-                return sColorChange;
-            } else {
-                return sColor;
-            }
-        },
-        /**
-         * 将rgb表示方式转换为hex表示方式
-         * @param {string} rgb -rgb颜色
-         */
-        colorHex: function (rgb) {
-            var _this = rgb;
-            var reg = /^#([0-9a-fA-f]{3}|[0-9a-fA-f]{6})$/;
-            if (/^(rgb|RGB)/.test(_this)) {
-                var aColor = _this.replace(/(?:(|)|rgb|RGB)*/g, "").split(",");
-                var strHex = "#";
-                for (var i = 0; i < aColor.length; i++) {
-                    var hex = Number(aColor[i]).toString(16);
-                    hex = hex < 10 ? 0 + '' + hex : hex;// 保证每个rgb的值为2位
-                    if (hex === "0") {
-                        hex += hex;
-                    }
-                    strHex += hex;
-                }
-                if (strHex.length !== 7) {
-                    strHex = _this;
-                }
-                return strHex;
-            } else if (reg.test(_this)) {
-                var aNum = _this.replace(/#/, "").split("");
-                if (aNum.length === 6) {
-                    return _this;
-                } else if (aNum.length === 3) {
-                    var numHex = "#";
-                    for (var i = 0; i < aNum.length; i += 1) {
-                        numHex += (aNum[i] + aNum[i]);
-                    }
-                    return numHex;
-                }
-            } else {
-                return _this;
-            }
-        }
-    };
-
-    //#endregion
-
-    //#region 数组排序
-
-    /**
-     * 对树状对象数组进行排序
-     * @param {array} treeData -树状对象数组
-     * @param {string} childrenField -子节点数组名称
-     * @param {string} sortField -排序字段名称
-     * @param {string} sortMode -排序方式asc/desc,默认asc
-     * @returns {array} 返回排序后数组，改变原素组
-     */
-    function sortTreeData(treeData, childrenField, sortField, sortMode) {
-        sortMode = sortMode || 'asc';
-        if (!sortField) return treeData;
-        var n = 1;
-        if (sortMode && sortMode.toLowerCase() == "desc") n = -1;
-        for (var i = 0; i < treeData.length; i++) {
-            if (treeData[i][childrenField])
-                sortTreeData(treeData[i][childrenField], childrenField, sortField, sortMode)
-        }
-        sortArr(treeData, sortMode, sortField);
-        return treeData;
-    }
-
-    /**
-     * 数组排序
-     * @param {array} arr 目标数组
-     * @param {string} sortMode 排序方式,asc升序,desc降序
-     * @param {string} sortField 排序字段，没有则为空
-     * @returns {array} 返回排序后数组，改变原素组
-     */
-    function sortArr(arr, sortMode, sortField) {
-        sortField = sortField || '';
-        var n = 1;
-        if (sortMode && sortMode.toLowerCase() == "desc") n = -1;
-        arr.sort(function (a, b) {
-            var a1, b1;
-            a1 = sortField ? a[sortField] : a;
-            b1 = sortField ? b[sortField] : b;
-            if (a1 > b1) {
-                return 1 * n;
-            }
-            else if (a1 < b1) {
-                return -1 * n;
-            } else {
-                return 0 * n;
-            }
-        });
-        return arr;
     }
 
     //#endregion
@@ -398,6 +394,7 @@
          * @returns {Accordion}
          */
         init: function (options) {
+            //若菜单节点中已绑定数据,直接从中取
             var lastOpts = this.menu.elData('lastOpts'),
                 menu = this.menu;
             //初始化配置值,可从菜单已绑定数据或标签属性中或传入配置项中或取
@@ -408,16 +405,16 @@
                 iconField: menu.getAttribute("iconField") || "",//节点图标字段，如字体图标类
                 sortName: menu.getAttribute("sortName") || "",//节点排序的字段名称
                 sortOrder: menu.getAttribute("sortOrder") || "asc",//节点排序方式asc/desc
-                childrenField: menu.getAttribute("childrenField") || "children",//子节点集
+                childrenField: menu.getAttribute("childrenField") || "children",//子节点字段名
                 url: menu.getAttribute("url") || "",//url加载数据初始化菜单。优先以传参data数组数据初始化菜单,若不传参则以url方式加载初始化
                 ajaxType: menu.getAttribute('ajaxType') || 'get',//请求类型，默认get
                 ajaxData: menu.getAttribute('ajaxData') || null,//请求参数数据
-                asTreeData: menu.getAttribute('asTreeData') ? convertToBool(menu.getAttribute('asTreeData')) : true,//菜单数组数据是否以树状数组展示
+                asTreeData: menu.getAttribute('asTreeData') ? toBool(menu.getAttribute('asTreeData')) : true,//菜单数组数据是否以树状数组展示
                 data: menu.getAttribute('data') || null,//初始化菜单的数据,url和data共存时优先使用data
                 indentStep: menu.getAttribute("indentStep") || 1,//菜单层级缩进数值(单位em)
                 startColor: menu.getAttribute("startColor") || '#18626b',//菜单开始背景色
                 endColor: menu.getAttribute("endColor") || '#2fb9ca',//菜单最终背景色
-                colorCount: menu.getAttribute("colorCount") || 5,//开始至结束背景色过渡段数
+                colorCount: menu.getAttribute("colorCount") || 5,//开始至结束每层级菜单背景色过渡段数
                 speed: menu.getAttribute("speed") || 400,//滑动速度。菜单滑动展开/收缩所用时间(ms)
                 onnodeclick: eval(menu.getAttribute("onnodeclick")) || null,//菜单节点点击
                 onnodemouseenter: eval(menu.getAttribute("onnodemouseenter")) || null,//鼠标进入节点
@@ -427,9 +424,9 @@
             this.options = extend(this.options, options || {}, true);
             var opts = this.options,
                 _this = this,
-                colorList = new gradientColor(opts.startColor, opts.endColor, opts.colorCount);
+                colorList = gradientColors(opts.startColor, opts.endColor, opts.colorCount);
             setOpts();
-            renderMenu();
+            render();
             bindEvent();
             return this;
 
@@ -438,7 +435,7 @@
                 opts.ajaxData = parseObj(opts.ajaxData);
                 opts.data = parseObj(opts.data);
                 if (!opts.data) {
-                    getUrlData()
+                    urlInitData()
                 }
                 opts.data = getFmtData(opts.asTreeData);
                 if (opts.asTreeData) {
@@ -459,14 +456,14 @@
             }
 
             /**
-             * 获取初始化菜单的数据
+             * 根据url初始化菜单的数据
              */
-            function getUrlData() {
+            function urlInitData() {
                 var url = _this.options.url,
                     type = _this.options.ajaxType,
                     json = _this.options.ajaxData;
                 if (url) {
-                    var xhr = createXMLHttpRequest();
+                    var xhr = createRequest();
                     xhr.onreadystatechange = function () {
                         if (xhr.readyState === 4 && xhr.status === 200) {
                             _this.options.data = typeof xhr.responseText === 'string' ? JSON.parse(xhr.responseText) : xhr.responseText;
@@ -496,9 +493,9 @@
             /**
              * 渲染生成菜单
              */
-            function renderMenu() {
+            function render() {
                 _this.menu.innerHTML = '';
-                createMenuItem(_this.getData(true), _this.menu, null, 1);
+                createItem(_this.getData(true), _this.menu, null, 1);
                 // 处理菜单层级缩进
                 menuIndent();
                 //菜单渲染完回调函数
@@ -532,7 +529,7 @@
              * @param {string|number|object} pid -可选。上级菜单id
              * @param {number} lv -当前菜单层级数
              */
-            function createMenuItem(data, box, pid, lv) {
+            function createItem(data, box, pid, lv) {
                 var ul = document.createElement('ul');
                 data.forEach(function (item) {
                     var li = createLi(item);
@@ -556,7 +553,7 @@
                         li.querySelector('a').classList.add('submenu');
                         //创建子菜单
                         var subLv = lv + 1;
-                        createMenuItem(item[opts.childrenField], li, item[opts.idField], subLv);
+                        createItem(item[opts.childrenField], li, item[opts.idField], subLv);
                     } else {
                         sender.isLeaf = true;
                     }
@@ -573,9 +570,9 @@
                     indent = 0,
                     step = parseFloat(opts.indentStep);
                 step = isNaN(step) ? 1 : step;
-                setItem(ul, indent);
+                nodeIndent(ul, indent);
 
-                function setItem(ul, indent) {
+                function nodeIndent(ul, indent) {
                     var uls = ul.querySelectorAll(':scope>li>ul');//':scope'若有兼容问题,请使用下面注释方法setItem?
                     indent = parseFloat(indent) + step;
                     uls.forEach(function (item) {
@@ -583,12 +580,12 @@
                         a.forEach(function (m) {
                             m.style.paddingLeft = indent + 'em';
                         });
-                        setItem(item, indent);
+                        nodeIndent(item, indent);
                     })
                 }
 
                 /*
-                    function setItem(ul,indent){
+                    function nodeIndent(ul,indent){
                         indent=parseFloat(indent) + step;
                         var c=ul.children;
                         for(var i=0;i<c.length;i++){
@@ -607,7 +604,7 @@
                                                 }
                                             }
                                         }
-                                        setItem(s[j],indent);
+                                        nodeIndent(s[j],indent);
                                     }
                                 }
                             }
@@ -622,13 +619,13 @@
             function bindEvent() {
                 _this.menu.querySelectorAll('a.menuitem').forEach(function (item) {
                     // //解绑hover和click事件
-                    removeEventHandler(item, 'click', clickFn, true);
-                    removeEventHandler(item, 'mouseenter', enterFn, true);
-                    removeEventHandler(item, 'mouseleave', leaveFn, true);
+                    removeEvent(item, 'click', clickFn, true);
+                    removeEvent(item, 'mouseenter', enterFn, true);
+                    removeEvent(item, 'mouseleave', leaveFn, true);
                     //绑定hover和click事件
-                    addEventHandler(item, 'click', clickFn, true);
-                    addEventHandler(item, 'mouseenter', enterFn, true);
-                    addEventHandler(item, 'mouseleave', leaveFn, true);
+                    addEvent(item, 'click', clickFn, true);
+                    addEvent(item, 'mouseenter', enterFn, true);
+                    addEvent(item, 'mouseleave', leaveFn, true);
                 });
 
                 //绑定事件 event
@@ -660,6 +657,7 @@
                     opts.onnodemouseleave && eval(opts.onnodemouseleave)(this.elData("sender"), e);
                 }
 
+                //或用js原生方法animate()实现滑动动画
                 /**
                  * 点击节点滑动收展菜单
                  * @param e
@@ -762,10 +760,11 @@
             /**
              * 获取指定结构的菜单数据数组
              * @param {boolean} asTree -数组是否以树状结构数组展示
+             * @returns {Array}
              */
             function getFmtData(asTree) {
                 var data = copyObj(opts.data), arr = [];
-                asTree = typeof asTree === 'undefined' ? convertToBool(opts.asTreeData) : convertToBool(asTree);
+                asTree = typeof asTree === 'undefined' ? toBool(opts.asTreeData) : toBool(asTree);
                 if (asTree) {
                     for (var i = 0; i < data.length; i++) {
                         //是否叶子节点，从叶子节点开始到跟节点逐步构建TreeData格式数据
@@ -798,7 +797,7 @@
                         if (opts.parentField in data[i]) delete data[i][opts.parentField];
                     }
                     //将数组先排序在返回数组
-                    return sortTreeData(data, opts.childrenField, opts.sortName, opts.sortOrder);
+                    return sortTreeArr(data, opts.childrenField, opts.sortName, opts.sortOrder);
                 } else {
                     toArr(data, arr, null);
                     return sortArr(arr, opts.sortOrder, opts.sortName)
@@ -826,7 +825,7 @@
          * @returns {array}
          */
         getData: function (asTree) {
-            asTree = typeof asTree === 'undefined' ? convertToBool(this.options.asTreeData) : convertToBool(asTree);
+            asTree = typeof asTree === 'undefined' ? toBool(this.options.asTreeData) : toBool(asTree);
             return asTree ? this.menu.elData('tree') : this.menu.elData('list');
         },
         /**
@@ -861,23 +860,23 @@
          * @returns {array}
          */
         getChildNodes: function (node, asTree, deep) {
-            asTree = typeof asTree === 'undefined' ? convertToBool(this.options.asTreeData) : convertToBool(asTree);
-            deep = convertToBool(deep);
+            asTree = typeof asTree === 'undefined' ? toBool(this.options.asTreeData) : toBool(asTree);
+            deep = toBool(deep);
             var opts = this.options,
                 data = copyObj(this.getData(asTree)),
                 arr = [];
             if (asTree) {
-                getTreeSub(data);
+                getTree(data);
             } else {
-                getListSub(node[opts.idField]);
+                getList(node[opts.idField]);
             }
 
-            //list arr
-            function getListSub(pid) {
+            //list children
+            function getList(pid) {
                 for (var i = 0; i < data.length; i++) {
                     if (data[i][opts.parentField] === pid) {
                         arr.push(data[i]);
-                        deep && getListSub(data[i][opts.idField]);
+                        deep && getList(data[i][opts.idField]);
                         data.splice(i, 1);
                         i = 0;
                     }
@@ -885,8 +884,8 @@
                 return arr;
             }
 
-            //tree arr
-            function getTreeSub(data) {
+            //tree children
+            function getTree(data) {
                 data.forEach(function (item) {
                     if (item[opts.idField] === node[opts.idField]) {
                         if (!(opts.childrenField in item) || item[opts.childrenField].length === 0) {
@@ -906,7 +905,7 @@
                     }
                     else {
                         if ((opts.childrenField in item) && item[opts.childrenField].length > 0) {
-                            getTreeSub(item[opts.childrenField]);
+                            getTree(item[opts.childrenField]);
                         }
                     }
                 });
@@ -929,5 +928,5 @@
         $.fn.accordion.constructor = Accordion;
     }
 
-    return Accordion;
+    return Accordion
 });
