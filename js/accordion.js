@@ -314,7 +314,7 @@
 
     /**
      * 以滑动方式显示节点
-     * @param {number} millisecond 滑动速度(完成滑动所需时间ms)
+     * @param {number} millisecond 滑动速度(完成滑动所需时间ms),默认值300
      */
     HTMLElement.prototype.slideDown = function (millisecond) {
         var display = window.getComputedStyle ? getComputedStyle(this, null)['display'] : this.currentStyle['display'];
@@ -322,7 +322,7 @@
             this.style.cssText = 'height:0;display:block';
         }
         var min = 0, max = this.scrollHeight, _this = this,
-            speed = (millisecond ? max / millisecond : max / 400) * 30;
+            speed = (millisecond ? max / millisecond : max / 300) * 5;
         if (!this.offsetHeight) {
             var down = setInterval(function () {
                 if (min === max) {
@@ -333,17 +333,17 @@
                     min = min > max ? max : min;
                     _this.style.height = min + 'px';
                 }
-            }, 30);//间隔时间不要设置过小或过大,设置过小interval时间误差越大，设置间隔过大达不到动画效果
+            }, 5);//间隔时间不要过小或过大,否则最终花费时间会与设定的完成时间误差较大,且设置间隔过大会卡顿没有平缓过度效果
         }
     }
 
     /**
      * 以滑动方式隐藏节点
-     * @param {number} millisecond -滑动速度(完成滑动所需时间ms)
+     * @param {number} millisecond -滑动速度(完成滑动所需时间ms),默认值300
      */
     HTMLElement.prototype.slideUp = function (millisecond) {
         var min = 0, max = this.scrollHeight, _this = this,
-            speed = (millisecond ? max / millisecond : max / 400) * 30;
+            speed = (millisecond ? max / millisecond : max / 300) * 5;
         if (this.offsetHeight) {
             var up = setInterval(function () {
                 if (max === min) {
@@ -354,7 +354,7 @@
                     max = max < min ? min : max;
                     _this.style.height = max + 'px';
                 }
-            }, 30);
+            }, 5);
         }
     }
 
@@ -414,7 +414,7 @@
                 startColor: menu.getAttribute("startColor") || '#18626b',//菜单开始背景色(HEX十六进制颜色码)
                 endColor: menu.getAttribute("endColor") || '#2fb9ca',//菜单最终背景色(HEX十六进制颜色码)
                 colorCount: menu.getAttribute("colorCount") || 5,//开始至结束每层级菜单背景色过渡段数
-                speed: menu.getAttribute("speed") || 400,//滑动速度。菜单滑动展开/收缩所用时间(ms)
+                speed: menu.getAttribute("speed") || 300,//滑动速度。菜单滑动展开/收缩所用时间(ms)
                 onnodeclick: eval(menu.getAttribute("onnodeclick")) || null,//菜单节点点击
                 onnodemouseenter: eval(menu.getAttribute("onnodemouseenter")) || null,//鼠标进入节点
                 onnodemouseleave: eval(menu.getAttribute("onnodemouseleave")) || null,//鼠标离开节点
