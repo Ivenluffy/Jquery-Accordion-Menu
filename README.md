@@ -1,7 +1,7 @@
 # Accordion Menu
 
-![Accordion](https://github.com/Ivenluffy/Accordion/blob/master/images/Accordion.png)
-![Accordion](https://github.com/Ivenluffy/Accordion/blob/master/images/Accordion1.png)
+![Accordion](https://github.com/Ivenluffy/Jquery-Accordion-Menu/blob/main/images/accordion.png)
+![Accordion](https://github.com/Ivenluffy/Jquery-Accordion-Menu/blob/main/images/accordion1.png)
 ### 使用1：
     <div id='menu'></div>
     
