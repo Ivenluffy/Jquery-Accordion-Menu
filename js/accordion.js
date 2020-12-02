@@ -414,7 +414,7 @@
                 startColor: menu.getAttribute("startColor") || '#18626b',//菜单开始背景色(HEX十六进制颜色码)
                 endColor: menu.getAttribute("endColor") || '#2fb9ca',//菜单最终背景色(HEX十六进制颜色码)
                 colorCount: menu.getAttribute("colorCount") || 5,//开始至结束每层级菜单背景色过渡段数
-                speed: menu.getAttribute("speed") || 300,//滑动速度。菜单滑动展开/收缩所用时间(ms)
+                speed: menu.getAttribute("speed") || 300,//滑动速度。菜单完成滑动展开/收缩所用时间(ms)
                 onnodeclick: eval(menu.getAttribute("onnodeclick")) || null,//菜单节点点击
                 onnodemouseenter: eval(menu.getAttribute("onnodemouseenter")) || null,//鼠标进入节点
                 onnodemouseleave: eval(menu.getAttribute("onnodemouseleave")) || null,//鼠标离开节点
