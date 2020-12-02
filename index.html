@@ -8,12 +8,40 @@
     <script src="js/accordion.js"></script>
     <style>
         .box{padding:30px;}
-        .accordion{width:200px;
-            margin: 50px; float:left;}
+        table{margin:20px;min-width:650px;}
+        caption{text-align:center;font-weight:bold;}
+        table td:nth-child(2n+1){width:70px;}
+        table td:nth-child(2n){width:70px;}
+        #menu{width:200px;}
     </style>
 </head>
 <body>
 <div  class="box">
+    <table>
+        <caption>Accordion Memu</caption>
+        <tr>
+            <td>开始颜色：</td>
+            <td>
+                <input type="color" value="#18626b" class="form-control" id="start" />
+            </td>
+            <td>结束颜色：</td>
+            <td>
+                <input type="color" value="#2fb9ca" class="form-control" id="end" />
+            </td>
+            <td>层级缩进：</td>
+            <td>
+                <input type="number" value="1" step="0.1" min="0" class="form-control" id="indent" />
+            </td>
+            <td>滑动速度：</td>
+            <td>
+                <input type="number" value="400" min="0" class="form-control" id="speed" />
+            </td>
+            <td>
+                &nbsp;&nbsp;
+                <button class="btn btn-primary" onclick="setMenu()">应用</button>
+            </td>
+        </tr>
+    </table>
     <div id="menu"></div>
 </div>
 </body>
@@ -510,17 +538,17 @@
         iconField:'MenuIcon',//节点图标字段，如字体图标类
         sortName:'Seq',//节点排序的字段名称
         sortOrder:'asc',//节点排序方式asc/desc
-        childrenField: 'children',//子节点集
+        childrenField: 'children',//子节点字段名
         url: '',//url加载数据初始化菜单。优先以传参data数组数据初始化菜单,若不传参则以url方式加载初始化
         ajaxType:'',//请求类型，默认get
         ajaxData:'',//请求参数数据
         asTreeData:false,//菜单数组数据是否以树状数组展示
         data: json,//初始化菜单的数据,url和data共存时优先使用data
         indentStep:1,//菜单层级缩进数值(单位em)
-        startColor:'#18626b',//菜单开始背景色
-        endColor:'#2fb9ca',//菜单最终背景色
-        colorCount:'5',//开始至结束背景色过渡段数
-        speed:500,//滑动速度。菜单滑动展开/收缩所用时间(ms)
+        startColor:'#18626b',//菜单开始背景色(HEX十六进制颜色码)
+        endColor:'#2fb9ca',//菜单最终背景色(HEX十六进制颜色码)
+        colorCount:'5',//开始至结束每层级菜单背景色过渡段数
+        speed:500,//展开滑动速度。菜单滑动展开/收缩所用时间(ms)
         onnodeclick: clickFn,//菜单节点点击
         onnodemouseenter:enterFn,//鼠标进入节点
         onnodemouseleave:leaveFn,//鼠标离开节点
@@ -540,4 +568,14 @@
     function renderFn(m){
         //console.log(m)
     }
+    function setMenu() {
+        var o = {
+            startColor:document.querySelector('#start').value,
+            endColor: document.querySelector('#end').value,
+            indentStep: document.querySelector('#indent').value,
+            speed: document.querySelector('#speed').value,
+        }
+        menu.init(o);
+    }
+
 </script>

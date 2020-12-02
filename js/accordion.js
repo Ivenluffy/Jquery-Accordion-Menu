@@ -1,7 +1,7 @@
 /*!
-  * accordion.js v1.0
-  * (c) 2020 Iven Wong
-  * Released under the MIT License.
+  * Accordion Menu Plugin v1.0
+  * Copyright (c) 2020 Iven Wong
+  * Released under the MIT license
   */
 (function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('jquery')) :
@@ -117,13 +117,12 @@
     }
 
     /**
-     * 获取渐变梯度颜色组
+     * 获取梯度渐变颜色组
      * @param {string} sColor -开始渐变色(HEX十六进制颜色码)
      * @param {string} eColor -结束渐变色(HEX十六进制颜色码)
      * @param {number} step -开始至结束颜色过渡段数
      * @returns {Array}
      */
-
     function gradientColors(sColor, eColor, step) {
         var startRGB = getRgbColor(sColor);//转换为rgb数组模式
         var startR = startRGB[0];
@@ -295,7 +294,7 @@
     }
 
     /**
-     * 移除之前通过elData()法设置的数据，返回当前dom节点
+     * 移除之前通过elData()法绑定的数据，返回当前dom节点
      * @param {string} key -可选,规定要移除的数据的名称。如果没有规定名称，该方法将从被选元素中移除所有已存储的数据。
      * @returns {HTMLElement} 返回当前dom元素节点
      */
@@ -366,7 +365,7 @@
     /**
      * 手风琴菜单
      * @param {string|HTMLElement} el -容器元素的CSS选择器字符串或html对象
-     * @param {object} options -配置项
+     * @param {object} options -配置项,也可从标签属性设置获取
      */
     function Accordion(el, options) {
         if (!(this instanceof Accordion)) {
@@ -412,8 +411,8 @@
                 asTreeData: menu.getAttribute('asTreeData') ? toBool(menu.getAttribute('asTreeData')) : true,//菜单数组数据是否以树状数组展示
                 data: menu.getAttribute('data') || null,//初始化菜单的数据,url和data共存时优先使用data
                 indentStep: menu.getAttribute("indentStep") || 1,//菜单层级缩进数值(单位em)
-                startColor: menu.getAttribute("startColor") || '#18626b',//菜单开始背景色
-                endColor: menu.getAttribute("endColor") || '#2fb9ca',//菜单最终背景色
+                startColor: menu.getAttribute("startColor") || '#18626b',//菜单开始背景色(HEX十六进制颜色码)
+                endColor: menu.getAttribute("endColor") || '#2fb9ca',//菜单最终背景色(HEX十六进制颜色码)
                 colorCount: menu.getAttribute("colorCount") || 5,//开始至结束每层级菜单背景色过渡段数
                 speed: menu.getAttribute("speed") || 400,//滑动速度。菜单滑动展开/收缩所用时间(ms)
                 onnodeclick: eval(menu.getAttribute("onnodeclick")) || null,//菜单节点点击
@@ -435,7 +434,7 @@
                 opts.ajaxData = parseObj(opts.ajaxData);
                 opts.data = parseObj(opts.data);
                 if (!opts.data) {
-                    urlInitData()
+                    urlGetData()
                 }
                 opts.data = getFmtData(opts.asTreeData);
                 if (opts.asTreeData) {
@@ -458,7 +457,7 @@
             /**
              * 根据url初始化菜单的数据
              */
-            function urlInitData() {
+            function urlGetData() {
                 var url = _this.options.url,
                     type = _this.options.ajaxType,
                     json = _this.options.ajaxData;
@@ -503,7 +502,7 @@
             }
 
             /**
-             * 创建li节点即菜单项
+             * 创建li菜单节点
              * @param {object} item -菜单节点数据
              * @returns {HTMLLIElement}
              */
@@ -523,7 +522,7 @@
             }
 
             /**
-             * 创建菜单块
+             * 创建ul菜单块
              * @param {array} data -必需。生成菜单的数据数组
              * @param {HTMLElement} box -必需。当前创建菜单块的容器节点
              * @param {string|number|object} pid -可选。上级菜单id
@@ -563,7 +562,7 @@
             }
 
             /**
-             * 处理层级文本缩进
+             * 处理菜单层级文本缩进
              */
             function menuIndent() {
                 var ul = _this.menu.querySelector('.accordion>ul'),
@@ -614,7 +613,7 @@
             }
 
             /**
-             * 绑定事件
+             * 菜单节点绑定事件
              */
             function bindEvent() {
                 _this.menu.querySelectorAll('a.menuitem').forEach(function (item) {
@@ -838,7 +837,7 @@
             return node ? node.elData("sender").node : null;
         },
         /**
-         * 获取父节点
+         * 获取目标节点的父节点
          * @param {object} node -目标节点
          * @returns {object}
          */
@@ -846,14 +845,14 @@
             return this.getNode(node[this.options.parentField]);
         },
         /**
-         * 获取当前选择的节点
+         * 获取当前选中的节点
          * @returns {object}
          */
         getSelectNode: function () {
             return this.menu.querySelector("a.activeitem").elData("sender").node;
         },
         /**
-         * 获取子节点
+         * 获取目标节点的子节点
          * @param {object} node -目标节点
          * @param {boolean} asTree -可选。数组是否以树状结构数组展示,默认取决初始化配置属性asTreeData
          * @param {boolean} deep -可选。是否获取该节点下所有子孙节点,默认false
@@ -914,6 +913,7 @@
             return arr;
         }
     };
+
     //#endregion
 
     //jQuery
