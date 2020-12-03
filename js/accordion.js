@@ -38,30 +38,6 @@
         return (typeof value === "string" && value.toLowerCase() === "false") ? false : Boolean(value);
     }
 
-    /**
-     * 向指定元素添加绑定事件句柄
-     * @param {object} ele -要绑定事件的dom对象目标
-     * @param {string} event -要指定的事件名称。注意:不要使用"on"前缀
-     * @param {function} fn -指定要事件触发时执行的函数。注意:若fn为匿名函数则无法通过removeEventListener方法移除该事件
-     * @param {boolean} useCapture -布尔值，指定事件是否在捕获或冒泡阶段执行;true-事件句柄在捕获阶段执行,false(默认)-事件句柄在冒泡阶段执行
-     */
-    function addEvent(ele, event, fn, useCapture) {
-        //useCapture undefined即默认false
-        useCapture = toBool(useCapture);
-        ele.addEventListener ? ele.addEventListener(event, fn, useCapture) : (ele.attachEvent ? ele.attachEvent("on" + event, fn, useCapture) : ele["on" + event] = fn);
-    }
-
-    /**
-     * 移除指定元素绑定的事件句柄(必须addEventListener方法添加的事件句柄)
-     * @param {object} ele -要绑定事件的dom对象目标
-     * @param {string} event -要移除的事件名称。注意:不要使用"on"前缀
-     * @param {function} fn -指定要移除的函数。注意:若addEventListener使用的fn为匿名函数则无法通过removeEventListener方法移除该事件
-     * @param {boolean} useCapture -布尔值，指定移除事件句柄的阶段;true-在捕获阶段移除事件句柄,false(默认)-在冒泡阶段移除事件句柄
-     */
-    function removeEvent(ele, event, fn, useCapture) {
-        useCapture = toBool(useCapture);
-        ele.removeEventListener ? ele.removeEventListener(event, fn, useCapture) : ele.detachEvent("on" + event, fn, useCapture);
-    }
 
     /**
      * 转为对象
@@ -261,77 +237,104 @@
 
     //#endregion
 
-    //#region HTMLElement扩展方法
+    //#region HTMLElement节点元素
+
+    /**
+     * 向指定元素添加绑定事件句柄
+     * @param {object} ele -要绑定事件的dom对象目标
+     * @param {string} event -要指定的事件名称。注意:不要使用"on"前缀
+     * @param {function} fn -指定要事件触发时执行的函数。注意:若fn为匿名函数则无法通过removeEventListener方法移除该事件
+     * @param {boolean} useCapture -布尔值，指定事件是否在捕获或冒泡阶段执行;true-事件句柄在捕获阶段执行,false(默认)-事件句柄在冒泡阶段执行
+     */
+    function addEvent(ele, event, fn, useCapture) {
+        //useCapture undefined即默认false
+        useCapture = toBool(useCapture);
+        ele.addEventListener ? ele.addEventListener(event, fn, useCapture) : (ele.attachEvent ? ele.attachEvent("on" + event, fn, useCapture) : ele["on" + event] = fn);
+    }
+
+    /**
+     * 移除指定元素绑定的事件句柄(必须addEventListener方法添加的事件句柄)
+     * @param {object} ele -要绑定事件的dom对象目标
+     * @param {string} event -要移除的事件名称。注意:不要使用"on"前缀
+     * @param {function} fn -指定要移除的函数。注意:若addEventListener使用的fn为匿名函数则无法通过removeEventListener方法移除该事件
+     * @param {boolean} useCapture -布尔值，指定移除事件句柄的阶段;true-在捕获阶段移除事件句柄,false(默认)-在冒泡阶段移除事件句柄
+     */
+    function removeEvent(ele, event, fn, useCapture) {
+        useCapture = toBool(useCapture);
+        ele.removeEventListener ? ele.removeEventListener(event, fn, useCapture) : ele.detachEvent("on" + event, fn, useCapture);
+    }
 
     /**
      * 在指定的元素节点上存取数据，返回设置值
+     * @param {HTMLElement} el -dom节点对象
      * @param {string} key -可选。String类型 指定的键名字符串
      * @param {object} value -可选。 Object类型 需要存储的任意类型的数据
      * @returns {HTMLElement|object} 存数据时返回当前dom节点对象,取数据时则返回之前存的数据
      * @description HTMLElement类型 要存储数据的DOM对象。参数key,value都不为空则存数据，否则为取数据。都为空时取所有存储的数据
      */
-    HTMLElement.prototype.elData = function (key, value) {
-        var _dataname = "_elData", ktype = typeof(key), vtype = typeof(value);
+    function elData(el, key, value) {
+        var _dataname = '_elData', ktype = typeof(key), vtype = typeof(value);
         key = ktype === 'string' ? key.trim() : key;
         //set
-        if (ktype !== "undefined" && vtype !== "undefined") {
-            if (key === null || ktype === "number" || ktype === "boolean") {
-                return this;
+        if (ktype !== 'undefined' && vtype !== 'undefined') {
+            if (key === null || ktype === 'number' || ktype === 'boolean') {
+                return el
             }
-            if (!(_dataname in this)) {
-                this[_dataname] = {};
+            if (!(_dataname in el)) {
+                el[_dataname] = {}
             }
-            this[_dataname][key] = value;
-            return this;
+            el[_dataname][key] = value;
+            return el
         }
         //get
-        if (ktype === "undefined" && vtype === "undefined") {
-            return this[_dataname] || {};
+        if (ktype === 'undefined' && vtype === 'undefined') {
+            return el[_dataname] || {}
         }
-        if (ktype !== "undefined" && vtype === "undefined") {
-            return (_dataname in this && key in this[_dataname]) ? this[_dataname][key] : undefined;
+        if (ktype !== 'undefined' && vtype === 'undefined') {
+            return (_dataname in el && key in el[_dataname]) ? el[_dataname][key] : undefined
         }
     }
 
     /**
      * 移除之前通过elData()法绑定的数据，返回当前dom节点
+     * @param {HTMLElement} el -dom节点对象
      * @param {string} key -可选,规定要移除的数据的名称。如果没有规定名称，该方法将从被选元素中移除所有已存储的数据。
      * @returns {HTMLElement} 返回当前dom元素节点
      */
-    HTMLElement.prototype.delElData = function (key) {
-        var type = typeof(key), _dataname = "_elData";
+    function delElData(el, key) {
+        var type = typeof(key), _dataname = '_elData';
         key = type === 'string' ? key.trim() : key;
-        if (key === null || type === "number" || type === "boolean") {
-            return this;
+        if (key === null || type === 'number' || type === 'boolean') {
+            return el
         }
-        if (type === "undefined") {//remove all
-            if (_dataname in this) delete this[_dataname];
+        if (type === 'undefined') {//remove all
+            if (_dataname in el) delete el[_dataname]
         } else {
-            if (_dataname in this && key in this[_dataname]) delete this[_dataname][key];
+            if (_dataname in el && key in el[_dataname]) delete el[_dataname][key]
         }
-        return this;
+        return el
     }
-
     /**
      * 以滑动方式显示节点
+     * @param {HTMLElement} el -dom节点对象
      * @param {number} millisecond 滑动速度(完成滑动所需时间ms),默认值300
      */
-    HTMLElement.prototype.slideDown = function (millisecond) {
-        var display = window.getComputedStyle ? getComputedStyle(this, null)['display'] : this.currentStyle['display'];
+    function slideDown(el, millisecond) {
+        var display = window.getComputedStyle ? getComputedStyle(el, null)['display'] : el.currentStyle['display'];
         if (display === 'none') {
-            this.style.cssText = 'height:0;display:block';
+            el.style.cssText = 'height:0;display:block';
         }
-        var min = 0, max = this.scrollHeight, _this = this,
+        var min = 0, max = el.scrollHeight,
             speed = (millisecond ? max / millisecond : max / 300) * 5;
-        if (!this.offsetHeight) {
+        if (!el.offsetHeight) {
             var down = setInterval(function () {
                 if (min === max) {
                     clearInterval(down);
-                    _this.style.cssText = 'display:block';
+                    el.style.cssText = 'display:block';
                 } else {
                     min += speed;
                     min = min > max ? max : min;
-                    _this.style.height = min + 'px';
+                    el.style.height = min + 'px';
                 }
             }, 5);//间隔时间不要过小或过大,否则最终花费时间会与设定的完成时间误差较大,且设置间隔过大会卡顿没有平缓过度效果
         }
@@ -339,22 +342,23 @@
 
     /**
      * 以滑动方式隐藏节点
+     * @param {HTMLElement} el -dom节点对象
      * @param {number} millisecond -滑动速度(完成滑动所需时间ms),默认值300
      */
-    HTMLElement.prototype.slideUp = function (millisecond) {
-        var min = 0, max = this.scrollHeight, _this = this,
+    function slideUp(el,millisecond) {
+        var min = 0, max = el.scrollHeight,
             speed = (millisecond ? max / millisecond : max / 300) * 5;
-        if (this.offsetHeight) {
+        if (el.offsetHeight) {
             var up = setInterval(function () {
                 if (max === min) {
                     clearInterval(up);
-                    _this.style.cssText = 'display:none';
+                    el.style.cssText = 'display:none';
                 } else {
                     max -= speed;
                     max = max < min ? min : max;
-                    _this.style.height = max + 'px';
+                    el.style.height = max + 'px';
                 }
-            }, 5);
+            }, 5)
         }
     }
 
@@ -394,7 +398,7 @@
          */
         init: function (options) {
             //若菜单节点中已绑定数据,直接从中取
-            var lastOpts = this.menu.elData('lastOpts'),
+            var lastOpts = elData(this.menu, 'lastOpts'),
                 menu = this.menu;
             //初始化配置值,可从菜单已绑定数据或标签属性中或传入配置项中或取
             this.options = lastOpts || {
@@ -438,11 +442,11 @@
                 }
                 opts.data = getFmtData(opts.asTreeData);
                 if (opts.asTreeData) {
-                    menu.elData('tree', opts.data);
-                    menu.elData('list', getFmtData(!opts.asTreeData))
+                    elData(menu, 'tree', opts.data);
+                    elData(menu, 'list', getFmtData(!opts.asTreeData))
                 } else {
-                    menu.elData('list', opts.data);
-                    menu.elData('tree', getFmtData(!opts.asTreeData))
+                    elData(menu, 'list', opts.data);
+                    elData(menu, 'tree', getFmtData(!opts.asTreeData))
                 }
                 if (!lastOpts) {
                     //清除标签自定义属性
@@ -451,7 +455,7 @@
                     }
                 }
                 //将配置项数据绑定到菜单可下次获取
-                menu.elData('lastOpts', opts);
+                elData(menu, 'lastOpts', opts);
             }
 
             /**
@@ -494,11 +498,51 @@
              */
             function render() {
                 _this.menu.innerHTML = '';
-                createItem(_this.getData(true), _this.menu, null, 1);
+                createUl(_this.getData(true), _this.menu, null, 1);
                 // 处理菜单层级缩进
                 menuIndent();
                 //菜单渲染完回调函数
                 opts.onmenuready && eval(opts.onmenuready) && eval(opts.onmenuready)(_this);
+            }
+
+            /**
+             * 创建ul菜单块
+             * @param {array} data -必需。生成菜单的数据数组
+             * @param {HTMLElement} box -必需。当前创建菜单块的容器节点
+             * @param {string|number|object} pid -可选。上级菜单id
+             * @param {number} lv -当前菜单层级数
+             */
+            function createUl(data, box, pid, lv) {
+                var ul = document.createElement('ul');
+                data.forEach(function (item) {
+                    var li = createLi(item);
+                    //赋值当前节点数据，并将该数据绑定到该节点标签中
+                    var sender = {
+                        menu: _this.menu,
+                        target: li.querySelector('a.menuitem'),
+                        options: opts,
+                        node: copyObj(item),//当前项
+                        level: lv,
+                        isLeaf: false//是否叶子节点
+                    };
+                    //删除该节点的子节点数组数据，只保留自身数据
+                    if (opts.childrenField in sender.node) delete sender.node[opts.childrenField];
+                    sender.node[opts.parentField] = pid;
+                    //设置每层级菜单背景色
+                    li.querySelector("a.menuitem").style.background = lv < colorList.length + 1 ? colorList[lv - 1] : colorList[colorList.length - 1];
+                    //绑定数据到标签中
+                    elData(li.querySelector(":scope>.menuitem"), 'sender', sender);
+                    if (item[opts.childrenField] && item[opts.childrenField].length > 0) {
+                        li.querySelector('a').classList.add('submenu');
+                        //创建子菜单
+                        var subLv = lv + 1;
+                        createUl(item[opts.childrenField], li, item[opts.idField], subLv);
+                    } else {
+                        sender.isLeaf = true;
+                    }
+                    ul.appendChild(li);
+                });
+                box.appendChild(ul);
             }
 
             /**
@@ -519,46 +563,6 @@
                 a.appendChild(txt);
                 li.appendChild(a);
                 return li;
-            }
-
-            /**
-             * 创建ul菜单块
-             * @param {array} data -必需。生成菜单的数据数组
-             * @param {HTMLElement} box -必需。当前创建菜单块的容器节点
-             * @param {string|number|object} pid -可选。上级菜单id
-             * @param {number} lv -当前菜单层级数
-             */
-            function createItem(data, box, pid, lv) {
-                var ul = document.createElement('ul');
-                data.forEach(function (item) {
-                    var li = createLi(item);
-                    //赋值当前节点数据，并将该数据绑定到该节点标签中
-                    var sender = {
-                        menu: _this.menu,
-                        target: li.querySelector('a.menuitem'),
-                        options: opts,
-                        node: copyObj(item),//当前项
-                        level: lv,
-                        isLeaf: false//是否叶子节点
-                    };
-                    //删除该节点的子节点数组数据，只保留自身数据
-                    if (opts.childrenField in sender.node) delete sender.node[opts.childrenField];
-                    sender.node[opts.parentField] = pid;
-                    //设置每层级菜单背景色
-                    li.querySelector("a.menuitem").style.background = lv < colorList.length + 1 ? colorList[lv - 1] : colorList[colorList.length - 1];
-                    //绑定数据到标签中
-                    li.querySelector(":scope>.menuitem").elData('sender', sender);
-                    if (item[opts.childrenField] && item[opts.childrenField].length > 0) {
-                        li.querySelector('a').classList.add('submenu');
-                        //创建子菜单
-                        var subLv = lv + 1;
-                        createItem(item[opts.childrenField], li, item[opts.idField], subLv);
-                    } else {
-                        sender.isLeaf = true;
-                    }
-                    ul.appendChild(li);
-                });
-                box.appendChild(ul);
             }
 
             /**
@@ -584,31 +588,31 @@
                 }
 
                 /*
-                    function nodeIndent(ul,indent){
-                        indent=parseFloat(indent) + step;
-                        var c=ul.children;
-                        for(var i=0;i<c.length;i++){
-                            if(c[i].tagName==='LI'){
-                                var s=c[i].children;
-                                for(var j=0;j<s.length;j++){
-                                    if(s[j].tagName==='UL'){
-                                        var l=s[j].children;
-                                        for(var k=0;k<l.length;k++){
-                                            if(l[k].tagName==='LI'){
-                                                var a=l[k].children;
-                                                for(var m=0;m<a.length;m++){
-                                                    if(a[m].tagName==='A'){
-                                                        a[m].style.paddingLeft=indent+'em';
-                                                    }
+                function nodeIndent(ul, indent) {
+                    indent = parseFloat(indent) + step;
+                    var c = ul.children;
+                    for (var i = 0; i < c.length; i++) {
+                        if (c[i].tagName === 'LI') {
+                            var s = c[i].children;
+                            for (var j = 0; j < s.length; j++) {
+                                if (s[j].tagName === 'UL') {
+                                    var l = s[j].children;
+                                    for (var k = 0; k < l.length; k++) {
+                                        if (l[k].tagName === 'LI') {
+                                            var a = l[k].children;
+                                            for (var m = 0; m < a.length; m++) {
+                                                if (a[m].tagName === 'A') {
+                                                    a[m].style.paddingLeft = indent + 'em';
                                                 }
                                             }
                                         }
-                                        nodeIndent(s[j],indent);
                                     }
+                                    nodeIndent(s[j], indent);
                                 }
                             }
                         }
                     }
+                }
                 */
             }
 
@@ -639,7 +643,7 @@
                      *@param {object} sender 菜单控件对象及节点信息
                      *@param {object} e event对象
                      * */
-                    opts.onnodemouseenter && eval(opts.onnodemouseenter)(this.elData("sender"), e);
+                    opts.onnodemouseenter && eval(opts.onnodemouseenter)(elData(this, "sender"), e);
                 }
 
                 /**
@@ -653,7 +657,7 @@
                      *@param {object} sender 菜单控件对象及节点信息
                      *@param {object} e event对象
                      * */
-                    opts.onnodemouseleave && eval(opts.onnodemouseleave)(this.elData("sender"), e);
+                    opts.onnodemouseleave && eval(opts.onnodemouseleave)(elData(this, "sender"), e);
                 }
 
                 //或用js原生方法animate()实现滑动动画
@@ -666,7 +670,7 @@
                     if (this.classList.contains('submenu')) {//有子菜单，则展开或折叠
                         if (this.classList.contains('iconopen')) {
                             this.parentNode.querySelectorAll('.iconopen,ul').forEach(function (item) {
-                                item.tagName === 'A' ? item.classList.remove('iconopen') : item.slideUp(speed);
+                                item.tagName === 'A' ? item.classList.remove('iconopen') : slideUp(item, speed);
                             });
                         } else {
                             this.classList.add('iconopen');
@@ -674,30 +678,30 @@
                             this.parentNode.parentNode.querySelectorAll(':scope>li>a').forEach(function (item) {
                                 if (item !== _self) {
                                     item.parentNode.querySelectorAll('.iconopen,ul').forEach(function (o) {
-                                        o.tagName === 'A' ? o.classList.remove('iconopen') : o.slideUp(speed)
+                                        o.tagName === 'A' ? o.classList.remove('iconopen') : slideUp(o, speed)
                                     });
                                 } else {
                                     var sub = item.parentNode.querySelector('ul');
-                                    sub && sub.slideDown(speed);
+                                    sub && slideDown(sub, speed);
                                 }
                             });
 
                             /*
-                                var lis=this.parentNode.parentNode.children;
-                                for(var i=0;i<lis.length;i++){
-                                    if(lis[i]!==this.parentNode){
-                                        lis[i].querySelectorAll('.iconopen,ul').forEach(function(o){
-                                            o.tagName==='A'?o.classList.remove('iconopen'):o.slideUp(speed)
-                                        });
-                                    }else{
-                                        var subUl=lis[i].children;
-                                        for(var k=0;k<subUl.length;k++){
-                                            if(subUl[k].tagName==='UL'){
-                                                subUl[k].slideDown(speed);
-                                            }
+                            var lis = this.parentNode.parentNode.children;
+                            for (var i = 0; i < lis.length; i++) {
+                                if (lis[i] !== this.parentNode) {
+                                    lis[i].querySelectorAll('.iconopen,ul').forEach(function (o) {
+                                        o.tagName === 'A' ? o.classList.remove('iconopen') : slideUp(o, speed)
+                                    });
+                                } else {
+                                    var subUl = lis[i].children;
+                                    for (var k = 0; k < subUl.length; k++) {
+                                        if (subUl[k].tagName === 'UL') {
+                                            slideDown(subUl[k], speed);
                                         }
                                     }
                                 }
+                            }
                             */
                         }
                     }
@@ -710,49 +714,49 @@
                      *@param {object} sender -菜单控件对象及节点信息
                      *@param {object} e -事件对象
                      * */
-                    opts.onnodeclick && eval(opts.onnodeclick)(this.elData('sender'), e);
+                    opts.onnodeclick && eval(opts.onnodeclick)(elData(this, 'sender'), e);
                 }
 
                 /*
-                                /!**
-                                 * 点击节点收展菜单(无平缓滑动效果)
-                                 * @param e
-                                 *!/
-                                function clickFn(e) {
-                                    if (this.classList.contains('submenu')) {//有子菜单，则展开或折叠
-                                        if (this.classList.contains('iconopen')) {
-                                            this.parentNode.querySelectorAll('.iconopen,ul').forEach(function(o){
-                                                o.tagName==='A'?o.classList.remove('iconopen'):o.classList.remove('itemshow');
-                                            });
-                                        } else {
-                                            this.classList.add('iconopen');
-                                            var s = this.parentNode.parentNode.children;
-                                            for (var i = 0; i < s.length; i++) {
-                                                if (s[i] !== this.parentNode) {
-                                                    s[i].querySelectorAll('.iconopen,ul').forEach(function (o) {
-                                                        o.tagName==='A'?o.classList.remove('iconopen'):o.classList.remove('itemshow');
-                                                    });
-                                                }else{
-                                                    for(var k=0;k<s[i].children.length;k++){
-                                                        if(s[i].children[k].tagName==='UL'){
-                                                            s[i].children[k].classList.add('itemshow');
-                                                        }
-                                                    }
-                                                }
-                                            }
+                /!**
+                 * 点击节点收展菜单(无平缓滑动效果)
+                 * @param e
+                 *!/
+                function clickFn(e) {
+                    if (this.classList.contains('submenu')) {//有子菜单，则展开或折叠
+                        if (this.classList.contains('iconopen')) {
+                            this.parentNode.querySelectorAll('.iconopen,ul').forEach(function(o){
+                                o.tagName==='A'?o.classList.remove('iconopen'):o.classList.remove('itemshow');
+                            });
+                        } else {
+                            this.classList.add('iconopen');
+                            var s = this.parentNode.parentNode.children;
+                            for (var i = 0; i < s.length; i++) {
+                                if (s[i] !== this.parentNode) {
+                                    s[i].querySelectorAll('.iconopen,ul').forEach(function (o) {
+                                        o.tagName==='A'?o.classList.remove('iconopen'):o.classList.remove('itemshow');
+                                    });
+                                }else{
+                                    for(var k=0;k<s[i].children.length;k++){
+                                        if(s[i].children[k].tagName==='UL'){
+                                            s[i].children[k].classList.add('itemshow');
                                         }
                                     }
-                                    _this.menu.querySelectorAll('a.menuitem').forEach(function (item) {
-                                        item.classList.remove('activeitem');
-                                    });
-                                    this.classList.add('activeitem');
-                                    /!**
-                                     * 鼠标进入菜单节点事件回调函数
-                                     *@param {object} sender -菜单控件对象及节点信息
-                                     *@param {object} e -事件对象
-                                     * *!/
-                                    opts.onnodeclick && eval(opts.onnodeclick)(this.elData('sender'),e);
                                 }
+                            }
+                        }
+                    }
+                    _this.menu.querySelectorAll('a.menuitem').forEach(function (item) {
+                        item.classList.remove('activeitem');
+                    });
+                    this.classList.add('activeitem');
+                    /!**
+                     * 鼠标进入菜单节点事件回调函数
+                     *@param {object} sender -菜单控件对象及节点信息
+                     *@param {object} e -事件对象
+                     * *!/
+                    opts.onnodeclick && eval(opts.onnodeclick)(elData(this,'sender'),e);
+                }
                 */
             }
 
@@ -825,7 +829,7 @@
          */
         getData: function (asTree) {
             asTree = typeof asTree === 'undefined' ? toBool(this.options.asTreeData) : toBool(asTree);
-            return asTree ? this.menu.elData('tree') : this.menu.elData('list');
+            return asTree ? elData(this.menu, 'tree') : elData(this.menu, 'list')
         },
         /**
          * 根据节点id获取节点
@@ -834,7 +838,7 @@
          */
         getNode: function (id) {
             var node = this.menu.querySelector("[data-id='" + id + "']");
-            return node ? node.elData("sender").node : null;
+            return node ? elData(node, "sender").node : null
         },
         /**
          * 获取目标节点的父节点
@@ -842,14 +846,14 @@
          * @returns {object}
          */
         getParentNode: function (node) {
-            return this.getNode(node[this.options.parentField]);
+            return this.getNode(node[this.options.parentField])
         },
         /**
          * 获取当前选中的节点
          * @returns {object}
          */
         getSelectNode: function () {
-            return this.menu.querySelector("a.activeitem").elData("sender").node;
+            return elData(this.menu.querySelector("a.activeitem"), "sender").node
         },
         /**
          * 获取目标节点的子节点
@@ -880,7 +884,7 @@
                         i = 0;
                     }
                 }
-                return arr;
+                return arr
             }
 
             //tree children
@@ -899,7 +903,7 @@
                                     }
                                 });
                             }
-                            return arr;
+                            return arr
                         }
                     }
                     else {
@@ -910,7 +914,7 @@
                 });
             }
 
-            return arr;
+            return arr
         }
     };
 
@@ -923,9 +927,9 @@
                 options = $.extend(true, {}, $.fn.accordion.data, arguments[0]);
             data = new Accordion(this, options);
             this.data("accordion", data);
-            return $.extend(true, this, data);
+            return $.extend(true, this, data)
         };
-        $.fn.accordion.constructor = Accordion;
+        $.fn.accordion.constructor = Accordion
     }
 
     return Accordion
