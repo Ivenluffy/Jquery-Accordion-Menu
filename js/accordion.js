@@ -38,6 +38,15 @@
         return (typeof value === "string" && value.toLowerCase() === "false") ? false : Boolean(value);
     }
 
+    /**
+     * 解析一个字符串，并返回一个浮点数
+     * @param {string} num
+     * @returns {number}
+     */
+    function parseNum(num) {
+        var n = parseFloat(num);
+        return isNaN(n) ? 0 : n;
+    }
 
     /**
      * 转为对象
@@ -265,6 +274,29 @@
     }
 
     /**
+     * 阻止特定事件的默认行为
+     * @param {object} event -事件对象
+     */
+    function preventDefaultEvent(event) {
+        event = event || window.event;//兼容IE
+        //preventDefault W3C标准技术;returnValue 兼容IE
+        event.preventDefault ? event.preventDefault() : event.returnValue = false;
+        //用于处理使用对象属性注册的处理程序
+        return false;
+    }
+
+    /**
+     * 阻止事件(捕获和冒泡阶段)传播
+     * @param {object} event -事件对象
+     */
+    function stopPropagationEvent(event) {
+        event = event || window.event;
+        //阻止捕获和冒泡阶段当前事件的进一步传播(IE是不支持事件捕获)
+        //stopPropagation W3C标准；cancelBubble 兼容IE
+        event.stopPropagation ? event.stopPropagation() : event.cancelBubble = true;
+    }
+
+    /**
      * 在指定的元素节点上存取数据，返回设置值
      * @param {HTMLElement} el -dom节点对象
      * @param {string} key -可选。String类型 指定的键名字符串
@@ -295,72 +327,235 @@
         }
     }
 
-    /**
-     * 移除之前通过elData()法绑定的数据，返回当前dom节点
-     * @param {HTMLElement} el -dom节点对象
-     * @param {string} key -可选,规定要移除的数据的名称。如果没有规定名称，该方法将从被选元素中移除所有已存储的数据。
-     * @returns {HTMLElement} 返回当前dom元素节点
-     */
-    function delElData(el, key) {
-        var type = typeof(key), _dataname = '_elData';
-        key = type === 'string' ? key.trim() : key;
-        if (key === null || type === 'number' || type === 'boolean') {
+    /*
+        /!**
+         * 移除之前通过elData()法绑定的数据，返回当前dom节点
+         * @param {HTMLElement} el -dom节点对象
+         * @param {string} key -可选,规定要移除的数据的名称。如果没有规定名称，该方法将从被选元素中移除所有已存储的数据。
+         * @returns {HTMLElement} 返回当前dom元素节点
+         *!/
+        function delElData(el, key) {
+            var type = typeof(key), _dataname = '_elData';
+            key = type === 'string' ? key.trim() : key;
+            if (key === null || type === 'number' || type === 'boolean') {
+                return el
+            }
+            if (type === 'undefined') {//remove all
+                if (_dataname in el) delete el[_dataname]
+            } else {
+                if (_dataname in el && key in el[_dataname]) delete el[_dataname][key]
+            }
             return el
         }
-        if (type === 'undefined') {//remove all
-            if (_dataname in el) delete el[_dataname]
-        } else {
-            if (_dataname in el && key in el[_dataname]) delete el[_dataname][key]
-        }
-        return el
-    }
+    */
+
     /**
-     * 以滑动方式显示节点
-     * @param {HTMLElement} el -dom节点对象
-     * @param {number} millisecond 滑动速度(完成滑动所需时间ms),默认值300
+     * 获取dom元素的CSS属性的值
+     * @param {HTMLElement} el -dom元素
+     * @param {string} prop -css属性名
+     * @returns {string}
      */
-    function slideDown(el, millisecond) {
-        var display = window.getComputedStyle ? getComputedStyle(el, null)['display'] : el.currentStyle['display'];
-        if (display === 'none') {
-            el.style.cssText = 'height:0;display:block';
+    function getStyle(el, prop) {
+        return window.getComputedStyle ? getComputedStyle(el, null)[prop] : el.currentStyle[prop]
+    }
+
+    /**slide滑动收展节点元素,不考虑’border-box:box-sizing‘这种情况(可能卡顿收展不能平滑过渡)**/
+
+    /**
+     * 记录绑定一些与高度相关的css信息到节点元素上即便后面元素的css样式有变化也可以从中取得其原始值
+     * @param {HTMLElement} el -dom元素
+     */
+    function markCss(el) {
+        if (!elData(el, 'slide')) {
+            elData(el, 'slide', true);
+            elData(el, 'cssText', el.style.cssText);
+            elData(el, 'borderTopWidth', getStyle(el, 'border-top-width'));
+            elData(el, 'borderBottomWidth', getStyle(el, 'border-bottom-width'));
+            elData(el, 'paddingTop', getStyle(el, 'padding-top'));
+            elData(el, 'paddingBottom', getStyle(el, 'padding-bottom'));
+            elData(el, 'height', getStyle(el, 'height'))
         }
-        var min = 0, max = el.scrollHeight,
-            speed = (millisecond ? max / millisecond : max / 300) * 5;
-        if (!el.offsetHeight) {
-            var down = setInterval(function () {
-                if (min === max) {
-                    clearInterval(down);
-                    el.style.cssText = 'display:block';
-                } else {
-                    min += speed;
-                    min = min > max ? max : min;
-                    el.style.height = min + 'px';
-                }
-            }, 5);//间隔时间不要过小或过大,否则最终花费时间会与设定的完成时间误差较大,且设置间隔过大会卡顿没有平缓过度效果
+        if (elData(el, 'height') === 'auto') {
+            el.setAttribute('hidden', true);
+            var c = el.style.cssText;
+            el.style.cssText = 'display:block';
+            elData(el, 'height', getStyle(el, 'height'));
+            el.style.cssText = c;
+            el.removeAttribute('hidden');
+        }
+    }
+
+    /**
+     * 获取当前状态中与元素高度相关的css样式值
+     * @param {HTMLElement} el -dom节点对象
+     * @returns {{bt: string, bb: string, pt: string, pb: string, h: string}}
+     */
+    function nowH(el) {
+        return {
+            bt: getStyle(el, 'border-top-width'),
+            bb: getStyle(el, 'border-bottom-width'),
+            pt: getStyle(el, 'padding-top'),
+            pb: getStyle(el, 'padding-bottom'),
+            h: getStyle(el, 'height'),
+        }
+    }
+
+    /**
+     * 获取最初始未有更改过的block状态中与元素高度相关的css样式值
+     * @param {HTMLElement} el -dom节点对象
+     * @returns {{css: (HTMLElement|Object), bt: (HTMLElement|Object), bb: (HTMLElement|Object), pt: (HTMLElement|Object), pb: (HTMLElement|Object), h: (HTMLElement|Object)}}
+     */
+    function endH(el) {
+        return {
+            css: elData(el, 'cssText'),
+            bt: elData(el, 'borderTopWidth'),
+            bb: elData(el, 'borderBottomWidth'),
+            pt: elData(el, 'paddingTop'),
+            pb: elData(el, 'paddingBottom'),
+            h: elData(el, 'height'),
         }
     }
 
     /**
      * 以滑动方式隐藏节点
      * @param {HTMLElement} el -dom节点对象
-     * @param {number} millisecond -滑动速度(完成滑动所需时间ms),默认值300
+     * @param {number} millisecond -滑动速度(完成滑动所需毫秒时间),默认值300
      */
-    function slideUp(el,millisecond) {
-        var min = 0, max = el.scrollHeight,
-            speed = (millisecond ? max / millisecond : max / 300) * 5;
-        if (el.offsetHeight) {
-            var up = setInterval(function () {
-                if (max === min) {
-                    clearInterval(up);
-                    el.style.cssText = 'display:none';
-                } else {
-                    max -= speed;
-                    max = max < min ? min : max;
-                    el.style.height = max + 'px';
+    function slideUp(el, millisecond) {
+        markCss(el);
+        elData(el, 'slideToggle', 'slideup');
+        var slide = Symbol('slide').toString(),
+            now = nowH(el),
+            end = endH(el),
+            bt = parseNum(end.bt),
+            bb = parseNum(end.bb),
+            pt = parseNum(end.pt),
+            pb = parseNum(end.pb),
+            h = parseNum(end.h),
+            total = h + pt + pb + bt + bb,
+            finish = false,
+            sum = total - (parseNum(now.bt) + parseNum(now.bb) + parseNum(now.pt) + parseNum(now.pb) + parseNum(now.h)),
+            speed = (millisecond ? total / millisecond : total / 300) * 5;
+        el.style.cssText = el.style.cssText + 'overflow:hidden;';
+        clearInterval(el[slide]);
+        el[slide] = setInterval(function () {
+            if (finish) {
+                clearInterval(el[slide]);
+                el.style.cssText = end.css + 'display:none';
+                if (slide in el) {
+                    delete el[slide]
                 }
-            }, 5)
-        }
+            } else {
+                sum += speed;
+                if (bb - sum > 0) {
+                    el.style.borderBottomWidth = bb - sum + 'px'
+                } else {
+                    el.style.borderBottomWidth = 0 + 'px';
+                    if (bb + pb - sum > 0) {
+                        el.style.paddingBottom = bb + pb - sum + 'px';
+                    } else {
+                        el.style.paddingBottom = 0 + 'px';
+                        if (bb + pb + h - sum > 0) {
+                            el.style.height = bb + pb + h - sum + 'px';
+                        } else {
+                            el.style.height = 0 + 'px';
+                            if (bb + pb + h + pt - sum > 0) {
+                                el.style.paddingTop = bb + pb + h + pt - sum + 'px';
+                            } else {
+                                el.style.paddingTop = 0 + 'px';
+                                if (bb + pb + h + pt + bt - sum > 0) {
+                                    el.style.borderTopWidth = bb + pb + h + pt + bt - sum + 'px';
+                                } else {
+                                    el.style.borderTopWidth = 0 + 'px';
+                                    finish = true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }, 5);//间隔时间不要过小或过大,否则最终花费时间会与设定的完成时间误差较大,且设置间隔过大会卡顿没有平缓过度效果
     }
+
+    /**
+     * 以滑动方式显示节点
+     * @param {HTMLElement} el -dom节点对象
+     * @param {number} millisecond 滑动速度(完成滑动所需毫秒时间),默认值300
+     */
+    function slideDown(el, millisecond) {
+        markCss(el);
+        elData(el, 'slideToggle', 'slidedown');
+        var slide = Symbol('slide').toString(),
+            now = nowH(el),
+            end = endH(el),
+            bt = parseNum(end.bt),
+            bb = parseNum(end.bb),
+            pt = parseNum(end.pt),
+            pb = parseNum(end.pb),
+            h = parseNum(end.h),
+            total = h + pt + pb + bt + bb,
+            finish = false,
+            speed = (millisecond ? total / millisecond : total / 300) * 5,
+            sum = 0;
+        if (getStyle(el, 'display') === 'none') {
+            el.style.cssText = end.css + 'overflow:hidden;height:0;display:block;border-top-width:0;border-bottom-width:0;padding-top:0;padding-bottom:0;';
+        } else {
+            el.style.cssText = el.style.cssText + 'overflow:hidden';
+            sum = parseNum(now.bt) + parseNum(now.bb) + parseNum(now.pt) + parseNum(now.pb) + parseNum(now.h);
+        }
+        clearInterval(el[slide]);
+        el[slide] = setInterval(function () {
+            if (finish) {
+                clearInterval(el[slide]);
+                el.style.cssText = end.css + 'display:block';
+                if (slide in el) {
+                    delete el[slide]
+                }
+            } else {
+                sum += speed;
+                if (bt - sum > 0) {
+                    el.style.borderTopWidth = sum + 'px';
+                } else {
+                    el.style.borderTopWidth = bt + 'px';
+                    if (bt + pt - sum > 0) {
+                        el.style.paddingTop = sum - bt + 'px';
+                    } else {
+                        el.style.paddingTop = pt + 'px';
+                        if (bt + pt + h - sum > 0) {
+                            el.style.height = sum - bt - pt + 'px';
+                        } else {
+                            el.style.height = h + 'px';
+                            if (bt + pt + h + pb - sum > 0) {
+                                el.style.paddingBottom = sum - bt - pt - h + 'px';
+                            } else {
+                                el.style.paddingBottom = pb + 'px';
+                                if (bt + pt + h + pb + bb - sum > 0) {
+                                    el.style.borderBottomWidth = sum - bt - pt - h - pb + 'px';
+                                } else {
+                                    el.style.borderBottomWidth = bb + 'px';
+                                    finish = true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }, 5);
+    }
+
+    /*
+        /!**
+         * dom元素以滑动方式在显示隐藏状态之间切换
+         * @param {HTMLElement} el -dom节点对象
+         * @param {number} millisecond 滑动速度(完成滑动所需毫秒时间),默认值300
+         *!/
+        function slideToggle(el, millisecond) {
+            getStyle(el, 'display') === 'none'
+            || elData(el, 'slideToggle') === 'slideup'
+                ? slideDown(el, millisecond)
+                : slideUp(el, millisecond);
+        }
+    */
 
     //#endregion
 
@@ -622,13 +817,13 @@
             function bindEvent() {
                 _this.menu.querySelectorAll('a.menuitem').forEach(function (item) {
                     // //解绑hover和click事件
-                    removeEvent(item, 'click', clickFn, true);
-                    removeEvent(item, 'mouseenter', enterFn, true);
-                    removeEvent(item, 'mouseleave', leaveFn, true);
+                    removeEvent(item, 'click', clickFn, false);
+                    removeEvent(item, 'mouseenter', enterFn, false);
+                    removeEvent(item, 'mouseleave', leaveFn, false);
                     //绑定hover和click事件
-                    addEvent(item, 'click', clickFn, true);
-                    addEvent(item, 'mouseenter', enterFn, true);
-                    addEvent(item, 'mouseleave', leaveFn, true);
+                    addEvent(item, 'click', clickFn, false);
+                    addEvent(item, 'mouseenter', enterFn, false);
+                    addEvent(item, 'mouseleave', leaveFn, false);
                 });
 
                 //绑定事件 event
@@ -637,6 +832,8 @@
                  * @param e
                  */
                 function enterFn(e) {
+                    preventDefaultEvent(e);
+                    stopPropagationEvent(e);
                     this.setAttribute('title', this.innerText);
                     /**
                      * 鼠标进入菜单节点事件回调函数
@@ -651,6 +848,8 @@
                  * @param e
                  */
                 function leaveFn(e) {
+                    preventDefaultEvent(e);
+                    stopPropagationEvent(e);
                     this.removeAttribute('title');
                     /**
                      * 鼠标离开菜单节点事件回调函数
@@ -666,6 +865,8 @@
                  * @param e
                  */
                 function clickFn(e) {
+                    preventDefaultEvent(e);
+                    stopPropagationEvent(e);
                     var speed = _this.options.speed, _self = this;
                     if (this.classList.contains('submenu')) {//有子菜单，则展开或折叠
                         if (this.classList.contains('iconopen')) {
@@ -718,45 +919,47 @@
                 }
 
                 /*
-                /!**
-                 * 点击节点收展菜单(无平缓滑动效果)
-                 * @param e
-                 *!/
-                function clickFn(e) {
-                    if (this.classList.contains('submenu')) {//有子菜单，则展开或折叠
-                        if (this.classList.contains('iconopen')) {
-                            this.parentNode.querySelectorAll('.iconopen,ul').forEach(function(o){
-                                o.tagName==='A'?o.classList.remove('iconopen'):o.classList.remove('itemshow');
-                            });
-                        } else {
-                            this.classList.add('iconopen');
-                            var s = this.parentNode.parentNode.children;
-                            for (var i = 0; i < s.length; i++) {
-                                if (s[i] !== this.parentNode) {
-                                    s[i].querySelectorAll('.iconopen,ul').forEach(function (o) {
-                                        o.tagName==='A'?o.classList.remove('iconopen'):o.classList.remove('itemshow');
-                                    });
-                                }else{
-                                    for(var k=0;k<s[i].children.length;k++){
-                                        if(s[i].children[k].tagName==='UL'){
-                                            s[i].children[k].classList.add('itemshow');
+                                /!**
+                                 * 点击节点收展菜单(无平缓滑动效果)
+                                 * @param e
+                                 *!/
+                                function clickFn(e) {
+                                    preventDefaultEvent(e);
+                                    stopPropagationEvent(e);
+                                    if (this.classList.contains('submenu')) {//有子菜单，则展开或折叠
+                                        if (this.classList.contains('iconopen')) {
+                                            this.parentNode.querySelectorAll('.iconopen,ul').forEach(function(o){
+                                                o.tagName==='A'?o.classList.remove('iconopen'):o.classList.remove('itemshow');
+                                            });
+                                        } else {
+                                            this.classList.add('iconopen');
+                                            var s = this.parentNode.parentNode.children;
+                                            for (var i = 0; i < s.length; i++) {
+                                                if (s[i] !== this.parentNode) {
+                                                    s[i].querySelectorAll('.iconopen,ul').forEach(function (o) {
+                                                        o.tagName==='A'?o.classList.remove('iconopen'):o.classList.remove('itemshow');
+                                                    });
+                                                }else{
+                                                    for(var k=0;k<s[i].children.length;k++){
+                                                        if(s[i].children[k].tagName==='UL'){
+                                                            s[i].children[k].classList.add('itemshow');
+                                                        }
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
+                                    _this.menu.querySelectorAll('a.menuitem').forEach(function (item) {
+                                        item.classList.remove('activeitem');
+                                    });
+                                    this.classList.add('activeitem');
+                                    /!**
+                                     * 鼠标进入菜单节点事件回调函数
+                                     *@param {object} sender -菜单控件对象及节点信息
+                                     *@param {object} e -事件对象
+                                     * *!/
+                                    opts.onnodeclick && eval(opts.onnodeclick)(elData(this,'sender'),e);
                                 }
-                            }
-                        }
-                    }
-                    _this.menu.querySelectorAll('a.menuitem').forEach(function (item) {
-                        item.classList.remove('activeitem');
-                    });
-                    this.classList.add('activeitem');
-                    /!**
-                     * 鼠标进入菜单节点事件回调函数
-                     *@param {object} sender -菜单控件对象及节点信息
-                     *@param {object} e -事件对象
-                     * *!/
-                    opts.onnodeclick && eval(opts.onnodeclick)(elData(this,'sender'),e);
-                }
                 */
             }
 
