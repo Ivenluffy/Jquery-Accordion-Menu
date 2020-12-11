@@ -614,10 +614,10 @@
                 endColor: menu.getAttribute("endColor") || '#2fb9ca',//菜单最终背景色(HEX十六进制颜色码)
                 colorCount: menu.getAttribute("colorCount") || 5,//开始至结束每层级菜单背景色过渡段数
                 speed: menu.getAttribute("speed") || 300,//滑动速度。菜单完成滑动展开/收缩所用时间(ms)
-                onnodeclick: eval(menu.getAttribute("onnodeclick")) || null,//菜单节点点击
-                onnodemouseenter: eval(menu.getAttribute("onnodemouseenter")) || null,//鼠标进入节点
-                onnodemouseleave: eval(menu.getAttribute("onnodemouseleave")) || null,//鼠标离开节点
-                onmenuready: eval(menu.getAttribute("onmenuready")) || null//菜单加载渲染完后
+                onnodeclick: eval(menu.getAttribute("onnodeclick")) || null,//菜单节点点击fn(sender,menu,e)
+                onnodemouseenter: eval(menu.getAttribute("onnodemouseenter")) || null,//鼠标进入节点fn(sender,menu,e)
+                onnodemouseleave: eval(menu.getAttribute("onnodemouseleave")) || null,//鼠标离开节点fn(sender,menu,e)
+                onmenuready: eval(menu.getAttribute("onmenuready")) || null//菜单加载渲染完后fn(menu)
             };
             this.options = extend(this.options, options || {}, true);
             var opts = this.options,
@@ -713,9 +713,7 @@
                     var li = createLi(item);
                     //赋值当前节点数据，并将该数据绑定到该节点标签中
                     var sender = {
-                        menu: _this.menu,
                         target: li.querySelector('a.menuitem'),
-                        options: opts,
                         node: copyObj(item),//当前项
                         level: lv,
                         isLeaf: false//是否叶子节点
@@ -832,15 +830,15 @@
                  * @param e
                  */
                 function enterFn(e) {
-                    preventDefaultEvent(e);
-                    stopPropagationEvent(e);
                     this.setAttribute('title', this.innerText);
                     /**
                      * 鼠标进入菜单节点事件回调函数
                      *@param {object} sender 菜单控件对象及节点信息
                      *@param {object} e event对象
                      * */
-                    opts.onnodemouseenter && eval(opts.onnodemouseenter)(elData(this, "sender"), e);
+                    opts.onnodemouseenter && eval(opts.onnodemouseenter)(elData(this, "sender"),_this, e);
+                    preventDefaultEvent(e);
+                    stopPropagationEvent(e);
                 }
 
                 /**
@@ -848,15 +846,15 @@
                  * @param e
                  */
                 function leaveFn(e) {
-                    preventDefaultEvent(e);
-                    stopPropagationEvent(e);
                     this.removeAttribute('title');
                     /**
                      * 鼠标离开菜单节点事件回调函数
                      *@param {object} sender 菜单控件对象及节点信息
                      *@param {object} e event对象
                      * */
-                    opts.onnodemouseleave && eval(opts.onnodemouseleave)(elData(this, "sender"), e);
+                    opts.onnodemouseleave && eval(opts.onnodemouseleave)(elData(this, "sender"),_this,e);
+                    preventDefaultEvent(e);
+                    stopPropagationEvent(e);
                 }
 
                 //或用js原生方法animate()实现滑动动画
@@ -865,8 +863,6 @@
                  * @param e
                  */
                 function clickFn(e) {
-                    preventDefaultEvent(e);
-                    stopPropagationEvent(e);
                     var speed = _this.options.speed, _self = this;
                     if (this.classList.contains('submenu')) {//有子菜单，则展开或折叠
                         if (this.classList.contains('iconopen')) {
@@ -915,7 +911,9 @@
                      *@param {object} sender -菜单控件对象及节点信息
                      *@param {object} e -事件对象
                      * */
-                    opts.onnodeclick && eval(opts.onnodeclick)(elData(this, 'sender'), e);
+                    opts.onnodeclick && eval(opts.onnodeclick)(elData(this, 'sender'),_this, e);
+                    preventDefaultEvent(e);
+                    stopPropagationEvent(e);
                 }
 
                 /*
@@ -924,8 +922,6 @@
                                  * @param e
                                  *!/
                                 function clickFn(e) {
-                                    preventDefaultEvent(e);
-                                    stopPropagationEvent(e);
                                     if (this.classList.contains('submenu')) {//有子菜单，则展开或折叠
                                         if (this.classList.contains('iconopen')) {
                                             this.parentNode.querySelectorAll('.iconopen,ul').forEach(function(o){
@@ -958,7 +954,9 @@
                                      *@param {object} sender -菜单控件对象及节点信息
                                      *@param {object} e -事件对象
                                      * *!/
-                                    opts.onnodeclick && eval(opts.onnodeclick)(elData(this,'sender'),e);
+                                    opts.onnodeclick && eval(opts.onnodeclick)(elData(this,'sender'),_this,e);
+                                    preventDefaultEvent(e);
+                                    stopPropagationEvent(e);
                                 }
                 */
             }
