@@ -504,7 +504,7 @@
             "ParentId": 49
         }
     ];
-    var opts = {
+        var opts = {
         idField: 'Id',//字段名
         parentField: 'ParentId',//父节点字段名
         nameField: 'MenuName',//节点显示文本
@@ -522,24 +522,26 @@
         endColor:'#2fb9ca',//菜单最终背景色
         colorCount:'5',//开始至结束背景色过渡段数
         speed:500,//滑动速度。菜单滑动展开/收缩所用时间(ms)
-        onnodeclick: clickFn,//菜单节点点击fn(sender,menu,e)
-        onnodemouseenter:enterFn,//鼠标进入节点fn(sender,menu,e)
-        onnodemouseleave:leaveFn,//鼠标离开节点fn(sender,menu,e)
-        onmenuready:renderFn//菜单加载渲染完后fn(menu)
+        onnodeclick: clickFn,//菜单节点点击fn(node,sender,ele,e)
+        onnodemouseenter:enterFn,//鼠标进入节点fn(node,sender,ele,e)
+        onnodemouseleave:leaveFn,//鼠标离开节点fn(node,sender,ele,e)
+        onmenuready:renderFn//菜单加载渲染完后fn(sender)
     };
     var menu=$('#menu').accordion(opts);
-    function clickFn(sender,menu,e){
+    function clickFn(node,sender,ele,e){
+        console.log(node)
         console.log(sender)
-        console.log(menu)
+        console.log(ele)
         console.log(e)
     }
-    function enterFn(sender,menu,e){
+    function enterFn(node,sender,ele,e){
         //console.log('enter')
     }
-    function leaveFn(sender,menu,e){
+    function leaveFn(node,sender,ele,e){
         //console.log('leave')
     }
-    function renderFn(menu){
+    function renderFn(sender){
         //console.log(menu)
     }
+
 </script>
