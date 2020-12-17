@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="css/bootstrap.css">
     <link rel="stylesheet" href="css/accordion.css">
     <script src="js/jquery-3.4.1.js"></script>
-    <script src="js/accordion.js"></script>
+    <script src="js/jquery.accordion.js"></script>
     <style>
         .box{padding:30px;}
         .accordion{width:200px;
@@ -522,23 +522,24 @@
         endColor:'#2fb9ca',//菜单最终背景色
         colorCount:'5',//开始至结束背景色过渡段数
         speed:500,//滑动速度。菜单滑动展开/收缩所用时间(ms)
-        onnodeclick: clickFn,//菜单节点点击
-        onnodemouseenter:enterFn,//鼠标进入节点
-        onnodemouseleave:leaveFn,//鼠标离开节点
-        onmenuready:renderFn//菜单加载渲染完后
+        onnodeclick: clickFn,//菜单节点点击fn(sender,menu,e)
+        onnodemouseenter:enterFn,//鼠标进入节点fn(sender,menu,e)
+        onnodemouseleave:leaveFn,//鼠标离开节点fn(sender,menu,e)
+        onmenuready:renderFn//菜单加载渲染完后fn(menu)
     };
     var menu=$('#menu').accordion(opts);
-    function clickFn(sender,e){
+    function clickFn(sender,menu,e){
         console.log(sender)
+        console.log(menu)
         console.log(e)
     }
-    function enterFn(sender,e){
+    function enterFn(sender,menu,e){
         //console.log('enter')
     }
-    function leaveFn(sender,e){
+    function leaveFn(sender,menu,e){
         //console.log('leave')
     }
-    function renderFn(m){
-        //console.log(m)
+    function renderFn(menu){
+        //console.log(menu)
     }
 </script>
