@@ -25,16 +25,16 @@
 </html>
 <script>
     var menu=new Accordion(".accordion",{});
-    function clickFn(sender,menu,e){
-        console.log(sender)
+    function clickFn(node,sender,ele,e){
+        console.log(node)
     }
-    function enterFn(sender,menu,e){
+    function enterFn(node,sender,ele,e){
         //console.log('enter')
     }
-    function leaveFn(sender,menu,e){
+    function leaveFn(node,sender,ele,e){
         //console.log('leave')
     }
-    function renderFn(menu){
+    function renderFn(sender){
         //console.log(menu)
     }
 </script>
