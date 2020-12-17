@@ -3,30 +3,563 @@
 <head>
     <meta charset="UTF-8">
     <title>Accordion menu</title>
-    <!--<link rel="stylesheet" href="css/bootstrap.css">-->
-    <link rel="stylesheet" href="css/accordion.min.css">
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/accordion.css">
     <script src="js/accordion.js"></script>
     <style>
         .box{padding:30px;}
-        .accordion{width:200px;
-            margin-top: 20px;}
+        table{margin:20px;min-width:650px;}
+        caption{text-align:center;font-weight:bold;}
+        table td:nth-child(2n+1){width:70px;}
+        table td:nth-child(2n){width:70px;}
+        #menu{width:200px;}
     </style>
 </head>
 <body>
-<div class="box">
-    <div class="accordion" idField="Id" parentField="ParentId" nameField="MenuName" iconField="MenuIcon"
-         sortName="Seq" sortOrder="asc" childrenField="children" url="data/tree.json" ajaxType="get"
-         ajaxData='{"name":"test"}' asTreeData="true" data="" indentStep="1.5" startColor="#000" endColor="#ccc"
-         colorCount="4" speed="500" onnodeclick="clickFn" onnodemouseenter="enterFn" onnodemouseleave="leaveFn"
-         onmenuready="renderFn">
-    </div>
+<div  class="box">
+    <table>
+        <caption>Accordion Memu</caption>
+        <tr>
+            <td>开始颜色：</td>
+            <td>
+                <input type="color" value="#18626b" class="form-control" id="start" />
+            </td>
+            <td>结束颜色：</td>
+            <td>
+                <input type="color" value="#2fb9ca" class="form-control" id="end" />
+            </td>
+            <td>层级缩进：</td>
+            <td>
+                <input type="number" value="1" step="0.1" min="0" class="form-control" id="indent" />
+            </td>
+            <td>滑动速度：</td>
+            <td>
+                <input type="number" value="300" min="0" class="form-control" id="speed" />
+            </td>
+            <td>
+                &nbsp;&nbsp;
+                <button class="btn btn-primary" onclick="setMenu()">应用</button>
+            </td>
+        </tr>
+    </table>
+    <div id="menu"></div>
 </div>
+</body>
+
 </body>
 </html>
 <script>
-    var menu=new Accordion(".accordion",{});
+    var json=[
+        {
+            "Id": 71,
+            "MenuName": "lfgb",
+            "MenuUrl": null,
+            "MenuIcon": "glyphicon glyphicon-info-sign",
+            "Seq": 0,
+            "Status": true,
+            "Remark": null,
+            "Creator": 6,
+            "CreatorName": null,
+            "Createdt": "2020-08-24 14:56: 53",
+            "Updater": 6,
+            "UpdaterName": null,
+            "Updatedt": "2020-08-24 14: 56: 53",
+            "ParentId": 60
+        },
+        {
+            "Id": 9,
+            "MenuName": "企业讯息",
+            "MenuUrl": null,
+            "MenuIcon": "glyphicon glyphicon-th-large",
+            "ParentId": 0,
+            "Seq": 1,
+            "Status": true,
+            "Remark": null,
+            "Creator": 70,
+            "CreatorName": null,
+            "Createdt": "2020-05-04 10: 20: 00",
+            "Updater": 30,
+            "UpdaterName": null,
+            "Updatedt": "2020-08-12 14: 58: 06"
+        },
+        {
+            "Id": 65,
+            "MenuName": "公司简介",
+            "MenuUrl": "/Base/Home/ViewCompany",
+            "MenuIcon": "glyphicon glyphicon-home",
+            "Seq": 1,
+            "Status": true,
+            "Remark": null,
+            "Creator": 30,
+            "CreatorName": null,
+            "Createdt": "2020-08-12 15: 09: 04",
+            "Updater": 70,
+            "UpdaterName": null,
+            "Updatedt": "2020-08-13 08: 48: 07",
+            "ParentId": 9
+        },
+        {
+            "Id": 5,
+            "MenuName": "ERP系统",
+            "MenuUrl": null,
+            "MenuIcon": "glyphicon glyphicon-cog",
+            "Seq": 1,
+            "Status": true,
+            "Remark": null,
+            "Creator": 70,
+            "CreatorName": null,
+            "Createdt": "2020-05-04 10: 18: 00",
+            "Updater": 70,
+            "UpdaterName": null,
+            "Updatedt": "2020-05-04 17: 10: 00",
+            "ParentId": 1
+        },
+        {
+            "Id": 43,
+            "MenuName": "质量认证",
+            "MenuUrl": null,
+            "MenuIcon": "glyphicon glyphicon-record",
+            "Seq": 1,
+            "Status": true,
+            "Remark": null,
+            "Creator": 30,
+            "CreatorName": null,
+            "Createdt": "2020-08-11 18:30: 28",
+            "Updater": 30,
+            "UpdaterName": null,
+            "Updatedt": "2020-08-11 18: 30: 28",
+            "ParentId": 11
+        },
+        {
+            "Id": 39,
+            "MenuName": "ISO9001",
+            "MenuUrl": null,
+            "MenuIcon": "glyphicon glyphicon-refresh",
+            "Seq": 1,
+            "Status": true,
+            "Remark": null,
+            "Creator": 30,
+            "CreatorName": null,
+            "Createdt": "2020-08-11 17: 52: 05",
+            "Updater": 30,
+            "UpdaterName": null,
+            "Updatedt": "2020-08-11 18:30: 45",
+            "ParentId": 43
+        },
+        {
+            "Id": 50,
+            "MenuName": "5M1E",
+            "MenuUrl": null,
+            "MenuIcon": "glyphicon glyphicon-option-horizontal",
+            "Seq": 1,
+            "Status": true,
+            "Remark": null,
+            "Creator": 30,
+            "CreatorName": null,
+            "Createdt": "2020-08-11 18: 40: 19",
+            "Updater": 30,
+            "UpdaterName": null,
+            "Updatedt": "2020-08-11 18: 40: 19",
+            "ParentId": 49
+        },
+        {
+            "Id": 61,
+            "MenuName": "FDA (USA)",
+            "MenuUrl": null,
+            "MenuIcon": "glyphicon glyphicon-piggy-bank",
+            "Seq": 1,
+            "Status": true,
+            "Remark": null,
+            "Creator": 30,
+            "CreatorName": null,
+            "Createdt": "2020-08-11 18: 51: 05",
+            "Updater": 30,
+            "UpdaterName": null,
+            "Updatedt": "2020-08-11 18: 55: 16",
+            "ParentId": 60
+        },
+        {
+            "Id": 20,
+            "MenuName": "公司活動",
+            "MenuUrl": null,
+            "MenuIcon": "glyphicon glyphicon-tree-conifer",
+            "Seq": 1,
+            "Status": true,
+            "Remark": null,
+            "Creator": 70,
+            "CreatorName": null,
+            "Createdt": "2020-05-04 10: 24: 00",
+            "Updater": 70,
+            "UpdaterName": null,
+            "Updatedt": "2020-05-04 17: 35: 00",
+            "ParentId": 4
+        },
+        {
+            "Id": 1,
+            "MenuName": "应用资讯",
+            "MenuUrl": null,
+            "MenuIcon": "glyphicon glyphicon-th-list",
+            "ParentId": 0,
+            "Seq": 2,
+            "Status": true,
+            "Remark": null,
+            "Creator": 70,
+            "CreatorName": null,
+            "Createdt": "2020-05-04 17: 10:00",
+            "Updater": 30,
+            "UpdaterName": null,
+            "Updatedt": "2020-08-12 14: 58: 49"
+        },
+        {
+            "Id": 6,
+            "MenuName": "企业网站",
+            "MenuUrl": "/Website/Addr",
+            "MenuIcon": "glyphicon glyphicon-stats",
+            "Seq": 2,
+            "Status": true,
+            "Remark": null,
+            "Creator": 70,
+            "CreatorName": null,
+            "Createdt": "2020-05-04 10: 19: 00",
+            "Updater": 70,
+            "UpdaterName": null,
+            "Updatedt": "2020-09-17 14: 59:00",
+            "ParentId": 1
+        },
+        {
+            "Id": 40,
+            "MenuName": "TS16949",
+            "MenuUrl": null,
+            "MenuIcon": "glyphicon glyphicon-refresh",
+            "Seq": 2,
+            "Status": true,
+            "Remark": null,
+            "Creator": 30,
+            "CreatorName": null,
+            "Createdt": "2020-08-11 17: 52: 50",
+            "Updater": 30,
+            "UpdaterName": null,
+            "Updatedt": "2020-08-11 18: 31: 01",
+            "ParentId": 43
+        },
+        {
+            "Id": 49,
+            "MenuName": "质量管理辅具",
+            "MenuUrl": null,
+            "MenuIcon": "glyphicon glyphicon-oil",
+            "Seq": 2,
+            "Status": true,
+            "Remark": null,
+            "Creator": 30,
+            "CreatorName": null,
+            "Createdt": "2020-08-11 18: 39: 37",
+            "Updater": 30,
+            "UpdaterName": null,
+            "Updatedt": "2020-08-11 19: 01: 31",
+            "ParentId": 11
+        },
+        {
+            "Id": 52,
+            "MenuName": "5W3H",
+            "MenuUrl": null,
+            "MenuIcon": "glyphicon glyphicon-option-vertical",
+            "Seq": 2,
+            "Status": true,
+            "Remark": null,
+            "Creator": 30,
+            "CreatorName": null,
+            "Createdt": "2020-08-11 18: 42: 09",
+            "Updater": 30,
+            "UpdaterName": null,
+            "Updatedt": "2020-08-11 18: 46: 07",
+            "ParentId": 49
+        },
+        {
+            "Id": 21,
+            "MenuName": "員工天地",
+            "MenuUrl": null,
+            "MenuIcon": "glyphicon glyphicon-user",
+            "Seq": 2,
+            "Status": true,
+            "Remark": null,
+            "Creator": 70,
+            "CreatorName": null,
+            "Createdt": "2020-05-04 10: 24: 00",
+            "Updater": 70,
+            "UpdaterName": null,
+            "Updatedt": "2020-05-04 17: 35: 00",
+            "ParentId": 4
+        },
+        {
+            "Id": 66,
+            "MenuName": "企业文化",
+            "MenuUrl": "/Base/Com/Culture",
+            "MenuIcon": "glyphicon glyphicon-flag",
+            "Seq": 3,
+            "Status": true,
+            "Remark": null,
+            "Creator": 30,
+            "CreatorName": null,
+            "Createdt": "2020-08-12 15: 09: 56",
+            "Updater": 70,
+            "UpdaterName": null,
+            "Updatedt": "2020-08-13 10: 23: 21",
+            "ParentId": 9
+        },
+        {
+            "Id": 7,
+            "MenuName": "通讯录",
+            "MenuUrl": "/AddrBook/Index",
+            "MenuIcon": "glyphicon glyphicon-book",
+            "Seq": 3,
+            "Status": true,
+            "Remark": null,
+            "Creator": 70,
+            "CreatorName": null,
+            "Createdt": "2020-05-04 10: 20: 00",
+            "Updater": 70,
+            "UpdaterName": null,
+            "Updatedt": "2020-05-15 16: 32: 50",
+            "ParentId": 1
+        },
+        {
+            "Id": 11,
+            "MenuName": "专业资讯",
+            "MenuUrl": null,
+            "MenuIcon": "glyphicon glyphicon-book",
+            "ParentId": 0,
+            "Seq": 3,
+            "Status": true,
+            "Remark": null,
+            "Creator": 70,
+            "CreatorName": null,
+            "Createdt": "2020-05-04 10:21: 00",
+            "Updater": 30,
+            "UpdaterName": null,
+            "Updatedt": "2020-08-12 16: 19: 45"
+        },
+        {
+            "Id": 55,
+            "MenuName": "六西格玛",
+            "MenuUrl": null,
+            "MenuIcon": "glyphicon glyphicon-knight",
+            "Seq": 3,
+            "Status": true,
+            "Remark": null,
+            "Creator": 30,
+            "CreatorName": null,
+            "Createdt": "2020-08-11 18: 45: 18",
+            "Updater": 30,
+            "UpdaterName": null,
+            "Updatedt": "2020-08-11 18: 45:36",
+            "ParentId": 49
+        },
+        {
+            "Id": 22,
+            "MenuName": "健康專欄",
+            "MenuUrl": null,
+            "MenuIcon": "glyphicon glyphicon-apple",
+            "Seq": 3,
+            "Status": true,
+            "Remark": null,
+            "Creator": 70,
+            "CreatorName": null,
+            "Createdt": "2020-05-04 10: 24: 00",
+            "Updater": 70,
+            "UpdaterName": null,
+            "Updatedt": "2020-05-04 17: 35: 00",
+            "ParentId": 4
+        },
+        {
+            "Id": 69,
+            "MenuName": "监控系统",
+            "MenuUrl": "/Website/Index",
+            "MenuIcon": "glyphicon glyphicon-camera",
+            "Seq": 4,
+            "Status": true,
+            "Remark": null,
+            "Creator": 30,
+            "CreatorName": null,
+            "Createdt": "2020-08-12 16: 51: 36",
+            "Updater": 70,
+            "UpdaterName": null,
+            "Updatedt": "2020-09-17 14: 59: 14",
+            "ParentId": 1
+        },
+        {
+            "Id": 54,
+            "MenuName": "7M1E",
+            "MenuUrl": null,
+            "MenuIcon": "glyphicon glyphicon-baby-formula",
+            "Seq": 4,
+            "Status": true,
+            "Remark": null,
+            "Creator": 30,
+            "CreatorName": null,
+            "Createdt": "2020-08-11 18: 44:05",
+            "Updater": 30,
+            "UpdaterName": null,
+            "Updatedt": "2020-08-11 18: 45: 47",
+            "ParentId": 49
+        },
+        {
+            "Id": 60,
+            "MenuName": "食品级认证",
+            "MenuUrl": null,
+            "MenuIcon": "glyphicon glyphicon-piggy-bank",
+            "Seq": 4,
+            "Status": true,
+            "Remark": null,
+            "Creator": 30,
+            "CreatorName": null,
+            "Createdt": "2020-08-11 18: 50: 39",
+            "Updater": 30,
+            "UpdaterName": null,
+            "Updatedt": "2020-08-11 18: 50:39",
+            "ParentId": 11
+        },
+        {
+            "Id": 4,
+            "MenuName": "智趣生活",
+            "MenuUrl": null,
+            "MenuIcon": "glyphicon glyphicon-cutlery",
+            "ParentId": 0,
+            "Seq": 4,
+            "Status": true,
+            "Remark": null,
+            "Creator": 70,
+            "CreatorName": null,
+            "Createdt": "2020-05-04 17: 35: 00",
+            "Updater": 70,
+            "UpdaterName": null,
+            "Updatedt": "2020-05-04 17: 38: 00"
+        },
+        {
+            "Id": 23,
+            "MenuName": "生活碎事",
+            "MenuUrl": "/EC/Index",
+            "MenuIcon": "glyphicon glyphicon-list-alt",
+            "Seq": 4,
+            "Status": true,
+            "Remark": null,
+            "Creator": 70,
+            "CreatorName": null,
+            "Createdt": "2020-05-04 10: 25: 00",
+            "Updater": 70,
+            "UpdaterName": null,
+            "Updatedt": "2020-11-04 09: 43: 35",
+            "ParentId": 4
+        },
+        {
+            "Id": 67,
+            "MenuName": "拓展愿景",
+            "MenuUrl": "/Base/Com/Vision",
+            "MenuIcon": "glyphicon glyphicon-globe",
+            "Seq": 5,
+            "Status": true,
+            "Remark": null,
+            "Creator": 30,
+            "CreatorName": null,
+            "Createdt": "2020-08-12 15:10: 32",
+            "Updater": 70,
+            "UpdaterName": null,
+            "Updatedt": "2020-08-13 10: 23: 33",
+            "ParentId": 9
+        },
+        {
+            "Id": 53,
+            "MenuName": "7S",
+            "MenuUrl": null,
+            "MenuIcon": "glyphicon glyphicon-queen",
+            "Seq": 5,
+            "Status": true,
+            "Remark": null,
+            "Creator": 30,
+            "CreatorName": null,
+            "Createdt": "2020-08-11 18: 43: 26",
+            "Updater": 30,
+            "UpdaterName": null,
+            "Updatedt": "2020-08-11 18:46: 24",
+            "ParentId": 49
+        },
+        {
+            "Id": 78,
+            "MenuName": "案例",
+            "MenuUrl": null,
+            "MenuIcon": "glyphicon glyphicon-comment",
+            "Seq": 6,
+            "Status": true,
+            "Remark": null,
+            "Creator": 6,
+            "CreatorName": null,
+            "Createdt": "2020-09-22 15: 50: 08",
+            "Updater": 6,
+            "UpdaterName": null,
+            "Updatedt": "2020-09-22 15: 50: 35",
+            "ParentId": 40
+        },
+        {
+            "Id": 51,
+            "MenuName": "8D报告",
+            "MenuUrl": null,
+            "MenuIcon": "glyphicon glyphicon-list-alt",
+            "Seq": 6,
+            "Status": true,
+            "Remark": null,
+            "Creator": 30,
+            "CreatorName": null,
+            "Createdt": "2020-08-11 18: 41: 24",
+            "Updater": 30,
+            "UpdaterName": null,
+            "Updatedt": "2020-08-11 18: 46: 35",
+            "ParentId": 49
+        },
+        {
+            "Id": 56,
+            "MenuName": "PDCA",
+            "MenuUrl": null,
+            "MenuIcon": "glyphicon glyphicon-tower",
+            "Seq": 7,
+            "Status": true,
+            "Remark": null,
+            "Creator": 30,
+            "CreatorName": null,
+            "Createdt": "2020-08-11 18: 47:00",
+            "Updater": 30,
+            "UpdaterName": null,
+            "Updatedt": "2020-08-11 18: 47: 00",
+            "ParentId": 49
+        }
+    ];
+    var opts = {
+        idField: 'Id',//字段名
+        parentField: 'ParentId',//父节点字段名
+        nameField: 'MenuName',//节点显示文本
+        iconField:'MenuIcon',//节点图标字段，如字体图标类
+        sortName:'Seq',//节点排序的字段名称
+        sortOrder:'asc',//节点排序方式asc/desc
+        childrenField: 'children',//子节点字段名
+        url: '',//url加载数据初始化菜单。优先以传参data数组数据初始化菜单,若不传参则以url方式加载初始化
+        ajaxType:'',//请求类型，默认get
+        ajaxData:'',//请求参数数据
+        asTreeData:false,//菜单数组数据是否以树状数组展示
+        data: json,//初始化菜单的数据,url和data共存时优先使用data
+        indentStep:1,//菜单层级缩进数值(单位em)
+        startColor:'#18626b',//菜单开始背景色(HEX十六进制颜色码)
+        endColor:'#2fb9ca',//菜单最终背景色(HEX十六进制颜色码)
+        colorCount:'5',//开始至结束每层级菜单背景色过渡段数
+        speed:300,//展开滑动速度。菜单完成滑动展开/收缩所用时间(ms)
+        onnodeclick: clickFn,//菜单节点点击fn(node,sender,ele,e)
+        onnodemouseenter:enterFn,//鼠标进入节点fn(node,sender,ele,e)
+        onnodemouseleave:leaveFn,//鼠标离开节点fn(node,sender,ele,e)
+        onmenuready:renderFn//菜单加载渲染完后fn(sender)
+    };
+    var menu=new Accordion("#menu",opts);
     function clickFn(node,sender,ele,e){
         console.log(node)
+        console.log(sender)
+        console.log(ele)
+        console.log(e)
     }
     function enterFn(node,sender,ele,e){
         //console.log('enter')
@@ -35,6 +568,16 @@
         //console.log('leave')
     }
     function renderFn(sender){
-        //console.log(menu)
+        console.log(sender)
     }
+    function setMenu() {
+        var o = {
+            startColor:document.querySelector('#start').value,
+            endColor: document.querySelector('#end').value,
+            indentStep: document.querySelector('#indent').value,
+            speed: document.querySelector('#speed').value,
+        }
+        menu.init(o);
+    }
+
 </script>
