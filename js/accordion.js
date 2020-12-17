@@ -447,7 +447,6 @@
             speed = (millisecond ? total / millisecond : total / 300) * 5;
         el.style.cssText = el.style.cssText + 'overflow:hidden;';
         clearInterval(el[slide]);
-        console.log(el.parentNode.querySelector(':scope>a').getAttribute("data-id")+" : "+new Date().getTime())
         el[slide] = setInterval(function () {
             if (finish) {
                 clearInterval(el[slide]);
@@ -455,8 +454,6 @@
                 if (slide in el) {
                     delete el[slide]
                 }
-                console.log(el.parentNode.querySelector(':scope>a').getAttribute("data-id")+" : "+new Date().getTime())
-                return finish;
             } else {
                 sum += speed;
                 if (bb - sum > 0) {
@@ -524,7 +521,6 @@
                 if (slide in el) {
                     delete el[slide]
                 }
-                return finish;
             } else {
                 sum += speed;
                 if (bt - sum > 0) {
@@ -881,8 +877,8 @@
                     var speed = _this.options.speed, _self = this;
                     if (this.classList.contains('submenu')) {//有子菜单，则展开或折叠
                         if (this.classList.contains('iconopen')) {
-                            this.parentNode.querySelectorAll('.iconopen,ul').forEach(function (item) {
-                                item.tagName === 'A' ? item.classList.remove('iconopen') :slideUp(item, speed);
+                            this.parentNode.querySelectorAll('.iconopen,ul').forEach(function (o) {
+                                o.tagName === 'A' ? o.classList.remove('iconopen') :getStyle(o,'display')!=='none'?slideUp(o, speed):'';
                             });
                         } else {
                             this.classList.add('iconopen');
@@ -890,7 +886,7 @@
                             this.parentNode.parentNode.querySelectorAll(':scope>li>a').forEach(function (item) {
                                 if (item !== _self) {
                                     item.parentNode.querySelectorAll('.iconopen,ul').forEach(function (o) {
-                                        o.tagName === 'A' ? o.classList.remove('iconopen') : slideUp(o, speed)
+                                        o.tagName === 'A' ? o.classList.remove('iconopen') :getStyle(o,'display')!=='none'?slideUp(o, speed):'';
                                     });
                                 } else {
                                     var sub = item.parentNode.querySelector('ul');
