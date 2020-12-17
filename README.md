@@ -30,7 +30,7 @@
         onmenuready:renderFn//菜单加载渲染完后fn(menu)
     };
     //new Accordion("#menu",opts);
-	$("#menu").accordion(opts);
+	var menu=$("#menu").accordion(opts);
 ### 使用2：
     <div class="menu" idField="Id" parentField="ParentId" nameField="MenuName" iconField="MenuIcon"
          sortName="Seq" sortOrder="asc" childrenField="children" url="data/tree.json" ajaxType="get"
@@ -41,7 +41,7 @@
     
     //js
     //new Accordion(".menu");
-	$(".menu").accordion();
+	var menu=$(".menu").accordion();
 ### 方法：
     
     var menu=new Accordion('.menu');
