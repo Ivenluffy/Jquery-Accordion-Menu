@@ -45,16 +45,10 @@
 ### 方法：
     
     var menu=new Accordion('.menu');
-    
     menu.init(opts)//根据配置项重生成菜单
-    
-    menu.getSelectNode()//获取选中节点
-    
+    menu.getSelectNode()//获取选中节点 
     menu.getNode(id)//根据id获取节点
-    
     menu.getParentNode(node)//获取指定节点的父节点
-    
     menu.getData(asTree)//获取菜单数据数组，asTree是否返回树状形式数组
-    
     menu.getChildNodes(node,asTree,deep)//获取指定节点的子节点。node 指定节点;asTree 是否返回树状形式数组;deep 是否返回所有子孙节点
 	
