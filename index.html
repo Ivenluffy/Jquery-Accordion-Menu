@@ -34,7 +34,7 @@
             </td>
             <td>滑动速度：</td>
             <td>
-                <input type="number" value="400" min="0" class="form-control" id="speed" />
+                <input type="number" value="300" min="0" class="form-control" id="speed" />
             </td>
             <td>
                 &nbsp;&nbsp;
@@ -548,25 +548,33 @@
         startColor:'#18626b',//菜单开始背景色(HEX十六进制颜色码)
         endColor:'#2fb9ca',//菜单最终背景色(HEX十六进制颜色码)
         colorCount:'5',//开始至结束每层级菜单背景色过渡段数
-        speed:500,//展开滑动速度。菜单滑动展开/收缩所用时间(ms)
-        onnodeclick: clickFn,//菜单节点点击
-        onnodemouseenter:enterFn,//鼠标进入节点
-        onnodemouseleave:leaveFn,//鼠标离开节点
-        onmenuready:renderFn//菜单加载渲染完后
+        speed:300,//展开滑动速度。菜单完成滑动展开/收缩所用时间(ms)
+        onnodeclick: clickFn,//菜单节点点击fn(sender,menu,e)
+        onnodemouseenter:enterFn,//鼠标进入节点fn(sender,menu,e)
+        onnodemouseleave:leaveFn,//鼠标离开节点fn(sender,menu,e)
+        onmenuready:renderFn//菜单加载渲染完后fn(menu)
     };
     var menu=new Accordion("#menu",opts);
-    function clickFn(sender,e){
+    function clickFn(sender,menu,e){
         console.log(sender)
+        console.log(menu)
         console.log(e)
     }
-    function enterFn(sender,e){
+    function enterFn(sender,menu,e){
         //console.log('enter')
+        //console.log(sender)
+        //console.log(menu)
+        //console.log(e)
+
     }
-    function leaveFn(sender,e){
+    function leaveFn(sender,menu,e){
         //console.log('leave')
+        //console.log(sender)
+        //console.log(menu)
+        //console.log(e)
     }
-    function renderFn(m){
-        //console.log(m)
+    function renderFn(menu){
+        console.log(menu)
     }
     function setMenu() {
         var o = {
