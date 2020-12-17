@@ -23,11 +23,11 @@
         startColor:'#18626b',//菜单开始背景色(HEX十六进制颜色码)
         endColor:'#2fb9ca',//菜单最终背景色(HEX十六进制颜色码)
         colorCount:'5',//开始至结束背景色过渡段数
-        speed:500,//滑动速度。菜单滑动展开/收缩所用时间(ms)
-        onnodeclick: clickFn,//菜单节点点击
-        onnodemouseenter:enterFn,//鼠标进入节点
-        onnodemouseleave:leaveFn,//鼠标离开节点
-        onmenuready:renderFn//菜单加载渲染完后
+        speed:300,//滑动速度。菜单完成滑动展开/收缩所用时间(ms)
+        onnodeclick: clickFn,//菜单节点点击fn(sender,menu,e)
+        onnodemouseenter:enterFn,//鼠标进入节点fn(sender,menu,e)
+        onnodemouseleave:leaveFn,//鼠标离开节点fn(sender,menu,e)
+        onmenuready:renderFn//菜单加载渲染完后fn(menu)
     };
     //new Accordion("#menu",opts);
 	$("#menu").accordion(opts);
@@ -42,3 +42,19 @@
     //js
     //new Accordion(".menu");
 	$(".menu").accordion();
+### 方法：
+    
+    var menu=new Accordion('.menu');
+    
+    menu.init(opts)//根据配置项重生成菜单
+    
+    menu.getSelectNode()//获取选中节点
+    
+    menu.getNode(id)//根据id获取节点
+    
+    menu.getParentNode(node)//获取指定节点的父节点
+    
+    menu.getData(asTree)//获取菜单数据数组，asTree是否返回树状形式数组
+    
+    menu.getChildNodes(node,asTree,deep)//获取指定节点的子节点。node 指定节点;asTree 是否返回树状形式数组;deep 是否返回所有子孙节点
+	
