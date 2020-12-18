@@ -354,13 +354,12 @@
             iconField:document.querySelector("#icon").checked?document.querySelector("#icon").value:"",
             startColor:document.querySelector('#start').value,
             endColor: document.querySelector('#end').value,
-            colorCount:document.querySelector('#colorCount').value||4
+            colorCount:document.querySelector('#colorCount').value||4,
             indentStep: document.querySelector('#indent').value,
             speed: document.querySelector('#speed').value,
             sortOrder:document.querySelector('.orderby:checked').value
 
         }
-        console.log(o)
         menu.init(o);
     }
 
