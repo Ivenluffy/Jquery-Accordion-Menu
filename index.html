@@ -8,9 +8,9 @@
     <script src="js/accordion.js"></script>
     <style>
         .box{padding:30px;}
-        table{margin:20px;min-width:650px;}
+        table{margin:20px;min-width:650px;border-collapse: separate;border-spacing: 4px;}
         caption{text-align:center;font-weight:bold;}
-        table td:nth-child(2n+1){width:70px;}
+        table td:nth-child(2n+1){width:85px;}
         table td:nth-child(2n){width:70px;}
         #menu{width:200px;}
     </style>
@@ -28,17 +28,36 @@
             <td>
                 <input type="color" value="#2fb9ca" class="form-control" id="end" />
             </td>
-            <td>层级缩进：</td>
+            <td style="width:100px">颜色递变步数：</td>
+            <td>
+                <input type="number" value="4" class="form-control" id="colorCount" />
+            </td>
+            <td>排序方式：</td>
+            <td style="width:100px">
+                <label>
+                    <input type="radio" value="asc" checked name="orderby" class="orderby" />升序
+                </label>
+                &nbsp;&nbsp;
+                <label>
+                    <input type="radio" value="desc" name="orderby" class="orderby" />降序
+                </label>
+            </td>
+        </tr>
+        <tr>
+            <td>显示图标：</td>
+            <td style="width:30px">
+                <input type="checkbox" checked value="MenuIcon" id="icon" />
+            </td>
+            <td>层级缩进值：</td>
             <td>
                 <input type="number" value="1" step="0.1" min="0" class="form-control" id="indent" />
             </td>
-            <td>滑动速度：</td>
+            <td>收展速度：</td>
             <td>
                 <input type="number" value="300" min="0" class="form-control" id="speed" />
             </td>
-            <td>
-                &nbsp;&nbsp;
-                <button class="btn btn-primary" onclick="setMenu()">应用</button>
+            <td colspan="2">
+                <button class="btn btn-primary form-control" onclick="setMenu()">应用</button>
             </td>
         </tr>
     </table>
@@ -307,7 +326,7 @@
         indentStep:1,//菜单层级缩进数值(单位em)
         startColor:'#18626b',//菜单开始背景色(HEX十六进制颜色码)
         endColor:'#2fb9ca',//菜单最终背景色(HEX十六进制颜色码)
-        colorCount:'5',//开始至结束每层级菜单背景色过渡段数
+        colorCount:'4',//开始至结束每层级菜单背景色过渡段数
         speed:300,//展开滑动速度。菜单完成滑动展开/收缩所用时间(ms)
         onnodeclick: clickFn,//菜单节点点击fn(node,sender,ele,e)
         onnodemouseenter:enterFn,//鼠标进入节点fn(node,sender,ele,e)
@@ -332,11 +351,16 @@
     }
     function setMenu() {
         var o = {
+            iconField:document.querySelector("#icon").checked?document.querySelector("#icon").value:"",
             startColor:document.querySelector('#start').value,
             endColor: document.querySelector('#end').value,
+            colorCount:document.querySelector('#colorCount').value||4
             indentStep: document.querySelector('#indent').value,
             speed: document.querySelector('#speed').value,
+            sortOrder:document.querySelector('.orderby:checked').value
+
         }
+        console.log(o)
         menu.init(o);
     }
 
